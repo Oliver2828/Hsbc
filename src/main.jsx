@@ -1,10 +1,46 @@
+// src/main.jsx
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 
+// Layouts
+import HomeLayout    from './layouts/Home/HomeLayout'
+import KoreaLayout   from './layouts/HSBC Korea/KoreaLayout'
+import MarketLayout  from './layouts/Global Market/MarketLayout'
+import BankingLayout from './layouts/Global Banking/BankingLayout'
+import AdminLayout   from './layouts/Admin/AdminLayout'
+import UserLayout    from './layouts/User/UserLayout'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    
+    <BrowserRouter>
+      <Routes>
+        {/* 1) Home + Login */}
+        <Route path="/" element={<HomeLayout />}>
+          <Route index element={<HomeLayout />} />
+          <Route path="login" element={<HomeLayout />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+
+        {/* 2) HSBC Korea */}
+        <Route path="/korea/*" element={<KoreaLayout />} />
+
+        {/* 3) Global Market */}
+        <Route path="/market/*" element={<MarketLayout />} />
+
+        {/* 4) Global Banking */}
+        <Route path="/banking/*" element={<BankingLayout />} />
+
+        {/* 5) Admin */}
+        <Route path="/admin/*" element={<AdminLayout />} />
+
+        {/* 6) User */}
+        <Route path="/user/*" element={<UserLayout />} />
+
+        {/* 7) Unknown path → Home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   </StrictMode>,
 )

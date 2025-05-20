@@ -2,12 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/hsbc-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>HSBC</title>
+    
+    <!-- Google Translate Integration -->
+    <div id="google_translate_element" style="display:none"></div>
+    <style>
+      /* Hide Google Translate elements */
+      .goog-te-banner-frame, .goog-te-menu-value {
+        display: none !important;
+      }
+      body {
+        top: 0 !important;
+      }
+      .goog-tooltip {
+        display: none !important;
+      }
+      .goog-te-menu-frame {
+        z-index: 99999 !important; /* Ensure dropdown appears above other content */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Google Translate Script -->
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,ko',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>

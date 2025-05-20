@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+
+
+/* Hide original Google Translate elements */
+.skiptranslate iframe {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}

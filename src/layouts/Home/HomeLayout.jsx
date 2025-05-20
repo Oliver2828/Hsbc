@@ -4,11 +4,13 @@ import HomeNavBar from '../../components/Home-components/HomeNavBar'
 import HomeFooter from '../../components/Home-components/HomeFooter'
 import HomePage    from '../../pages/Homepage'
 import Login from '../../components/Home-components/Login'
+import HomeSub from '../../components/Home-components/HomeSub'
 
 export default function HomeLayout() {
   return (
     <>
       <HomeNavBar />
+      <HomeSub/>
       <main>
         <Routes>
           {/* GET /               → HomePage */}

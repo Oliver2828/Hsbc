@@ -2,7 +2,11 @@ import React from 'react'
 
 function Korea1() {
   return (
-    <div>Korea1</div>
+    <>
+    
+    <div className=' bg-[red] '></div>
+    
+    </>
   )
 }
 

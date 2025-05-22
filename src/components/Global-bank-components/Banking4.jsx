@@ -37,7 +37,9 @@ export default function Banking4() {
         </div>
         <div className="hover:underline cursor-pointer">
           Loan interest rate (corporate) <span className="text-red-600 ml-1">›</span>
+          {/* hhhh */}
         </div>
+           {/* jjj */}
       </div>
     </section>
   );

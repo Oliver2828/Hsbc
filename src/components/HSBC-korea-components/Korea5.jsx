@@ -4,6 +4,7 @@ import React from "react";
 const Korea5 = () => {
   return (
     <div className="bg-white py-16 px-6 max-w-6xl mx-auto">
+      {/* jj */}
       {/* CEO Message */}
       <section className="mb-16">
         <h2 className="text-3xl font-semibold mb-6">CEO Message</h2>

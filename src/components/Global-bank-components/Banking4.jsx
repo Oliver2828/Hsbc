@@ -2,7 +2,7 @@ import { Download } from 'lucide-react';
 
 export default function Banking4() {
   return (
-    <section className="p-6">
+    <section className="p-6 mx-[95px]">
       <h2 className="text-xl font-semibold mb-4 border-l-4 border-red-600 pl-3">
         Useful Information
       </h2>

@@ -23,7 +23,7 @@ const sections = [
 
 const Banking3 = () => {
   return (
-    <div className="bg-white py-10 px-4 md:px-10 max-w-7xl mx-auto">
+    <div className="bg-white mx-[95px] py-10 px-4 md:px-10 max-w-7xl ">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {sections.map((section, idx) => (
           <div key={idx} className="text-center">

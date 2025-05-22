@@ -35,7 +35,7 @@ const HomeTwo = () => {
                   alt="Global Markets" 
                 />
               </div>
-              <h2 className="text-xl font-bold text-gray-800 underline mb-4">
+              <h2 className="text-xl font-bold text-gray-800 hover:underline cursor-pointer mb-4">
                 <a
                   href="/global-banking"
                   className="flex items-center gap-[10px]"
@@ -59,7 +59,7 @@ const HomeTwo = () => {
                   alt="Corporate Card Launch" 
                 />
               </div>
-              <h3 className="text-lg flex items-center gap-[20px] underline font-semibold text-gray-800 mb-4">
+              <h3 className="text-lg flex items-center gap-[20px] hover:underline cursor-pointer font-semibold text-gray-800 mb-4">
                 <a
                   href="/corporate-card"
                   className="flex gap-[10px]"
@@ -80,7 +80,7 @@ const HomeTwo = () => {
           <div className="flex gap-8">
             {/* Notices */}
             <div className="w-1/2 bg-gray-100 p-6 rounded-lg">
-              <h2 className="text-xl font-bold text-gray-800 underline mb-4">
+              <h2 className="text-xl font-bold text-gray-800 hover:underline cursor-pointer mb-4">
                 <a
                   href="/notices"
                   onClick={e => handleLinkClick(e, '/notices')}
@@ -95,7 +95,7 @@ const HomeTwo = () => {
 
             {/* About HSBC */}
             <div className="w-1/2">
-              <h2 className="text-xl font-bold text-gray-800 underline mb-4">
+              <h2 className="text-xl font-bold text-gray-800 hover:underline cursor-pointer mb-4">
                 <a
                   href="/about-hsbc"
                   className='flex items-center gap-[10px]'

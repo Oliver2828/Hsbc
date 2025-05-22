@@ -19,7 +19,7 @@ function HomeNavBar() {
       <div className='bg-white h-[11vh] border-b border-gray-200 grid grid-cols-12'>
         {/* Logo */}
         <div className='flex col-span-2 justify-end items-center pr-[40px]'>
-          <div className='bg-[url(././assets/hsbc-logo.svg)] bg-center bg-contain w-[100px] h-[40px] bg-no-repeat'></div>
+          <a href="/"><div className='bg-[url(././assets/hsbc-logo.svg)] bg-center bg-contain w-[100px] h-[40px] bg-no-repeat'></div></a>
         </div>
 
         <div className='col-span-7'></div>

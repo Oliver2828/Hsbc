@@ -1,9 +1,16 @@
-import React from 'react'
+import React from 'react';
+import Banking2 from '../components/Global-bank-components/Banking2';
+import Banking3 from '../components/Global-bank-components/Banking3';
+import Banking4 from '../components/Global-bank-components/Banking4';
 
 function BankingHome() {
   return (
-    <div>BankingHome</div>
-  )
+    <div>
+      <Banking2 />
+      <Banking3 />
+      <Banking4 />
+    </div>
+  );
 }
 
-export default BankingHome
+export default BankingHome;

@@ -1,7 +1,7 @@
 // src/layouts/BankingLayout.jsx
 import { Routes, Route } from 'react-router-dom'
 import BankingNavBar   from '../../components/Global-bank-components/BankingNavBar'
-import BankingFooter   from '../../components/Global-bank-components/BankingNavBar'
+import BankingFooter   from '../../components/Global-bank-components/BankingFooter'
 import BankingHome from '../../pages/BankingHome'
 
 

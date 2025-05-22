@@ -42,7 +42,7 @@ function HomeFooter() {
               key={index}
               variants={listItemVariants}
               custom={index}
-              className='relative'
+              className='relative hover:underline cursor-pointer'
             >
               <a href="" className='block pb-1 relative'>
                 {item}
@@ -87,7 +87,7 @@ function HomeFooter() {
                 key={index}
                 variants={listItemVariants}
                 custom={index}
-                className='relative'
+                className='relative hover:underline cursor-pointer'
               >
                 <a href="" className='block pb-1 relative'>
                   {item}
@@ -118,7 +118,7 @@ function HomeFooter() {
                 key={index}
                 variants={listItemVariants}
                 custom={index}
-                className='relative'
+                className='relative hover:underline cursor-pointer'
               >
                 <a href="" className='block pb-1'>
                   {item}
@@ -144,7 +144,7 @@ function HomeFooter() {
                 key={index}
                 variants={listItemVariants}
                 custom={index}
-                className='relative'
+                className='relative hover:underline cursor-pointer'
               >
                 <a href="" className='block pb-1'>
                   {item}

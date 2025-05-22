@@ -14,7 +14,7 @@ function Korea1() {
       
       {/* Share Section - Positioned Over Image */}
       <motion.div 
-        className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-[30%] flex shadow-xl rounded-sm'
+        className='absolute bottom-0 right-1.5 -translate-x-1/2 translate-y-1/2 w-[30%] flex shadow-xl rounded-sm'
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}

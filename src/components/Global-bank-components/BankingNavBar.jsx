@@ -7,7 +7,7 @@ function BankingNavBar() {
   const [showPopup, setShowPopup] = useState(false);
   const [pendingRoute, setPendingRoute] = useState(null);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('Korea');
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [activeMenuPath, setActiveMenuPath] = useState([]);
   const navigate = useNavigate();
 
@@ -59,8 +59,19 @@ function BankingNavBar() {
   ];
 
   const languages = [
-    { code: 'KR', name: 'Korea', flag: '🇰🇷' },
-    { code: 'EN', name: 'English', flag: '🇺🇸' }
+    { code: 'en',    name: 'English',    flag: '🇺🇸' },
+    { code: 'es',    name: 'Spanish',    flag: '🇪🇸' },
+    { code: 'zh-CN', name: 'Chinese',    flag: '🇨🇳' },
+    { code: 'hi',    name: 'Hindi',      flag: '🇮🇳' },
+    { code: 'ar',    name: 'Arabic',     flag: '🇸🇦' },
+    { code: 'pt',    name: 'Portuguese', flag: '🇵🇹' },
+    { code: 'bn',    name: 'Bengali',    flag: '🇧🇩' },
+    { code: 'ru',    name: 'Russian',    flag: '🇷🇺' },
+    { code: 'ja',    name: 'Japanese',   flag: '🇯🇵' },
+    { code: 'de',    name: 'German',     flag: '🇩🇪' },
+    { code: 'fr',    name: 'French',     flag: '🇫🇷' },
+    { code: 'it',    name: 'Italian',    flag: '🇮🇹' },
+    { code: 'ko',    name: 'Korean',     flag: '🇰🇷' },
   ];
 
   const handleNavigation = (path) => {
@@ -164,7 +175,6 @@ function BankingNavBar() {
                   transition={{ duration: 0.2 }}
                   onClick={() => {
                     if (['Markets and Securities Services','About HSBC Korea'].includes(item.title)) {
-                      // open popup for top-level click if desired
                       setPendingRoute(item.submenu[0]?.path);
                       setShowPopup(true);
                     } else {
@@ -204,17 +214,17 @@ function BankingNavBar() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full mt-2 w-full bg-[#4e4b4b]  shadow-lg z-50"
+                  className="absolute top-full mt-2 w-full bg-[#4e4b4b] shadow-lg z-50 max-h-64 overflow-auto"
                 >
                   {languages.map((lang, idx) => (
                     <motion.div
                       key={idx}
-                      className="flex items-center gap-2 p-3  cursor-pointer text-white"
-                      whileHover={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+                      className="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-white/10"
                       transition={{ duration: 0.2 }}
                       onClick={() => {
                         setSelectedLanguage(lang.name);
                         setLanguageOpen(false);
+                        window.changeLanguage(lang.code);
                       }}
                     >
                       <span>{lang.flag}</span>
@@ -228,7 +238,7 @@ function BankingNavBar() {
 
           <div className="flex items-center">
             <button
-              className="bg-red-600 text-white h-[45px] w-[60%] hover:bg-red-700 transition-colors "
+              className="bg-red-600 text-white h-[45px] w-[60%] hover:bg-red-700 transition-colors"
               onClick={() => setShowPopup(true)}
             >
               Login

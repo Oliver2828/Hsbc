@@ -26,7 +26,7 @@ function KoreaSub() {
     <>
       <div className='bg-white grid grid-cols-12 h-[9vh]'>
         <div className='flex col-span-2 justify-end items-center pl-[40px]'>
-          <a href="/">
+          <a href="/korea">
             <div className='bg-[url(././assets/hsbc-logo.svg)] bg-center bg-contain w-[100px] h-[40px] bg-no-repeat'></div>
           </a>
         </div>

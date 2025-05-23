@@ -7,6 +7,7 @@ function BankingNavBar() {
   const [showPopup, setShowPopup] = useState(false);
   const [pendingRoute, setPendingRoute] = useState(null);
   const navigate = useNavigate();
+  // gg
 
   const menuItems = [
     { 

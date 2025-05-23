@@ -113,16 +113,15 @@ function MarketFooter() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className='flex justify-center'>
+          <div className='flex '>
             <motion.ul 
-              className='flex items-center pr-[50px] text-white gap-[45px]'
+              className='flex items-center pl-[95px] text-white gap-[45px]'
               variants={listVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {['How Your Credit Information is Used', 'Personal Information Processing Guideline',
-                'Terms of Use', 'Hyperlink Policy', 'FAQ', 'HSBC Group'].map((item, index) => (
+              {['Terms of Use', 'Privacy notice', 'Cookie notice', 'Accessibility', 'Complaint Handling'].map((item, index) => (
                 <motion.li 
                   key={index}
                   variants={itemVariants}

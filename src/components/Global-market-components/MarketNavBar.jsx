@@ -10,48 +10,44 @@ function BankingNavBar() {
 
   const menuItems = [
     { 
-      title: 'Insights',
+      title: 'Insight',
       submenu: [
         { 
-          title: 'Personal Banking',
-          path: '/personal-banking',
+          title: 'Insight',
+          path: '/market/insight',
         },
-        { 
-          title: 'Business Banking',
-          path: '/business-banking',
-        }
+        
       ]
     },
     { 
       title: 'Solutions',
       submenu: [
-        { title: 'Trading', path: '/markets/trading' },
-        { title: 'Research', path: '/markets/research' },
-        { title: 'Advisory', path: '/markets/advisory' }
+        { 
+          title: 'Solution',
+          path: '/market/solution',
+        },
+        
       ]
     },
     { 
       title: 'Events',
       submenu: [
-        { title: 'History', path: '/about/history' },
-        { title: 'Leadership', path: '/about/leadership' },
-        { title: 'Sustainability', path: '/about/sustainability' }
+        { title: 'History', path: '/market/event' },
+        
       ]
     },
      { 
       title: 'Financial Regulation',
       submenu: [
-        { title: 'History', path: '/about/history' },
-        { title: 'Leadership', path: '/about/leadership' },
-        { title: 'Sustainability', path: '/about/sustainability' }
+        { title: 'History', path: '/market/finacial' },
+       
       ]
     },
      { 
       title: 'About us',
       submenu: [
-        { title: 'History', path: '/about/history' },
-        { title: 'Leadership', path: '/about/leadership' },
-        { title: 'Sustainability', path: '/about/sustainability' }
+        { title: 'History', path: '/market/about' },
+ 
       ]
     }
   ];
@@ -75,7 +71,7 @@ function BankingNavBar() {
       >
         {/* Logo */}
         <div className="flex col-span-2 justify-end items-center pr-[40px]">
-          <a href="/banking">
+          <a href="/market">
             <div className="bg-[url(././assets/hsbc.svg)] bg-center bg-contain w-[80px] h-[40px] bg-no-repeat" />
           </a>
         </div>

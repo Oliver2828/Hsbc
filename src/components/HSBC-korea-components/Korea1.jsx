@@ -22,7 +22,7 @@ function Korea1() {
         <div className='w-[40%] flex items-center justify-center font-semibold text-white gap-[20px] text-[18px] bg-[#353333] py-4'>
           <IoMdShare size={25}/>
           <p>SHARE</p>
-          {/* hh */}
+          
         </div>
         <div className='w-[20%] my-[10px] border-r border-gray-300 flex items-center justify-center bg-white'>
           <FaXTwitter className='text-red-500' size={30} />

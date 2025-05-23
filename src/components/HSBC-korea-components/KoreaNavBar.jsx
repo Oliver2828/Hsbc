@@ -8,8 +8,19 @@ function KoreaNavBar() {
   const [selectedLanguage, setSelectedLanguage] = useState('English');
 
   const languages = [
-    { code: 'EN', name: 'English' },
-    { code: 'KO', name: 'Korea' }
+    { code: 'en',    name: 'English'    },
+    { code: 'es',    name: 'Spanish'    },
+    { code: 'zh-CN', name: 'Chinese'    },
+    { code: 'hi',    name: 'Hindi'      },
+    { code: 'ar',    name: 'Arabic'     },
+    { code: 'pt',    name: 'Portuguese' },
+    { code: 'bn',    name: 'Bengali'    },
+    { code: 'ru',    name: 'Russian'    },
+    { code: 'ja',    name: 'Japanese'   },
+    { code: 'de',    name: 'German'     },
+    { code: 'fr',    name: 'French'     },
+    { code: 'it',    name: 'Italian'    },
+    { code: 'ko',    name: 'Korean'     },
   ];
 
   return (
@@ -59,15 +70,18 @@ function KoreaNavBar() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className='absolute right-0 mt-2 bg-black/90 p-2 rounded shadow-lg min-w-[120px]'
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className='absolute right-0 mt-2 bg-black/90 p-2 rounded shadow-lg min-w-[120px] z-50'
               >
                 {languages.map((lang) => (
                   <div
                     key={lang.code}
-                    className='px-3 py-2 hover:bg-white/10 rounded-sm cursor-pointer text-sm'
+                    className='px-3 py-2 hover:bg-white/10 rounded-sm cursor-pointer text-sm text-white'
                     onClick={() => {
                       setSelectedLanguage(lang.name);
                       setIsLanguageOpen(false);
+                      window.changeLanguage(lang.code);
                     }}
                   >
                     {lang.name}

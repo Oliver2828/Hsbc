@@ -4,6 +4,11 @@ import MarketNavBar    from '../../components/Global-market-components/MarketNav
 import MarketFooter    from '../../components/Global-market-components/MarketFooter'
 import MarketHome from '../../pages/MarketHome'
 import MarketSub from '../../components/Global-market-components/MarketSub'
+import MarketInsight from '../../pages/MarketInsight'
+import MarketSolution from '../../pages/MarketSolution'
+import MarketEvent from '../../pages/MarketEvent'
+import MarketFinancial from '../../pages/MarketFinancial'
+import MarketAboutUs from '../../pages/MarketAboutUs'
 
 
 export default function MarketLayout() {
@@ -16,7 +21,19 @@ export default function MarketLayout() {
           {/* GET /market             → MarketHome */}
           <Route index element={<MarketHome />} />
           {/* GET /market/stocks      → StocksPage */}
-          {/* <Route path="stocks" element={<StocksPage />} /> */}
+          <Route path="insight" element={<MarketInsight />} />
+
+          <Route path="solution" element={<MarketSolution />} />
+
+          <Route path="event" element={<MarketEvent />} />
+
+          <Route path="finacial" element={<MarketFinancial />} />
+
+          <Route path="about" element={<MarketAboutUs />} />
+
+          
+
+
 
         </Routes>
       </main>

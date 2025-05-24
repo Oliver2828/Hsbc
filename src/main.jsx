@@ -11,18 +11,13 @@ import MarketLayout  from './layouts/Global Market/MarketLayout'
 import BankingLayout from './layouts/Global Banking/BankingLayout'
 import AdminLayout   from './layouts/Admin/AdminLayout'
 import UserLayout    from './layouts/User/UserLayout'
-// import Popup from './components/Pop-up-component/Popup'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* 1) Home + Login */}
-        <Route path="/" element={<HomeLayout />}>
-          <Route index element={<HomeLayout />} />
-          <Route path="login" element={<HomeLayout />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
+        {/* 1) Home + Login (and all sub‑paths) */}
+        <Route path="/*" element={<HomeLayout />} />
 
         {/* 2) HSBC Korea */}
         <Route path="/korea/*" element={<KoreaLayout />} />
@@ -38,9 +33,6 @@ createRoot(document.getElementById('root')).render(
 
         {/* 6) User */}
         <Route path="/user/*" element={<UserLayout />} />
-
-        {/* <Route path="/popup/*" element={<Popup />} /> */}
-
 
         {/* 7) Unknown path → Home */}
         <Route path="*" element={<Navigate to="/" replace />} />

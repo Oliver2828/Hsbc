@@ -9,7 +9,7 @@ const Login = () => {
     >
       <div className="w-full max-w-2xl bg-white shadow-md rounded-2xl p-4 border border-gray-200 h-[360px] flex flex-col justify-center">
         <h2 className="text-2xl font-bold text-red-600 mb-2 text-center">Log on to HSBCnet</h2>
-
+          {/* jj */}
         <form className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>

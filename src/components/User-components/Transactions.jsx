@@ -68,6 +68,7 @@ const Transactions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedYears, setExpandedYears] = useState(new Set());
   const [expandedMonths, setExpandedMonths] = useState(new Set());
+  const [activeTab, setActiveTab] = useState("recent");
 
   const allTransactions = useMemo(() => {
     const startDate = new Date("2022-03-01");
@@ -204,7 +205,6 @@ const Transactions = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-
       {/* Header */}
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Transaction History</h1>
@@ -217,74 +217,112 @@ const Transactions = () => {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search transactions by date, type or amount"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.targetValue)}
           />
         </div>
       </div>
 
-      {/* Recent Transactions */}
-      <TransactionSection title="🔄 Recent Transactions (Last 30 Days)">
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <TransactionTable transactions={recentTransactions} />
-        </div>
-      </TransactionSection>
+      {/* Tabs Navigation */}
+      <div className="flex flex-wrap gap-2 justify-center mb-8">
+        <button
+          onClick={() => setActiveTab("recent")}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            activeTab === "recent"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          Recent Transactions
+        </button>
+        <button
+          onClick={() => setActiveTab("statement")}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            activeTab === "statement"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          Account Statement
+        </button>
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            activeTab === "history"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          Full History
+        </button>
+      </div>
 
-      {/* Account Statement */}
-      <TransactionSection title="📄 Account Statement">
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <TransactionTable transactions={accountStatement} showBalance={true} />
-        </div>
-      </TransactionSection>
+      {/* Tab Content */}
+      {activeTab === "recent" && (
+        <TransactionSection title="🔄 Recent Transactions (Last 30 Days)">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <TransactionTable transactions={recentTransactions} />
+          </div>
+        </TransactionSection>
+      )}
 
-      {/* Full History */}
-      <TransactionSection title="📚 Full Transaction History">
-        <div className="space-y-4">
-          {Object.entries(filteredData).map(([year, months]) => (
-            <div key={year} className="border rounded-lg bg-white shadow-sm overflow-hidden">
-              <button
-                onClick={() => toggleYear(year)}
-                className="w-full flex items-center justify-between px-6 py-4 bg-gray-50 hover:bg-gray-100 transition-colors"
-              >
-                <span className="text-lg font-semibold text-gray-900">{year}</span>
-                {expandedYears.has(year) ? (
-                  <FiChevronUp className="h-5 w-5 text-gray-600" />
-                ) : (
-                  <FiChevronDown className="h-5 w-5 text-gray-600" />
-                )}
-              </button>
+      {activeTab === "statement" && (
+        <TransactionSection title="📄 Account Statement">
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <TransactionTable transactions={accountStatement} showBalance={true} />
+          </div>
+        </TransactionSection>
+      )}
 
-              <CollapseTransition isOpen={expandedYears.has(year)}>
-                <div className="space-y-4 p-4 pt-2">
-                  {Object.entries(months).map(([month, txns]) => {
-                    const monthKey = `${year}-${month}`;
-                    return (
-                      <div key={monthKey} className="border rounded-lg">
-                        <button
-                          onClick={() => toggleMonth(monthKey)}
-                          className="w-full flex items-center justify-between px-5 py-3 bg-white hover:bg-gray-50"
-                        >
-                          <span className="font-medium text-gray-700">{month}</span>
-                          {expandedMonths.has(monthKey) ? (
-                            <FiChevronUp className="h-5 w-5 text-gray-600" />
-                          ) : (
-                            <FiChevronDown className="h-5 w-5 text-gray-600" />
-                          )}
-                        </button>
+      {activeTab === "history" && (
+        <TransactionSection title="📚 Full Transaction History">
+          <div className="space-y-4">
+            {Object.entries(filteredData).map(([year, months]) => (
+              <div key={year} className="border rounded-lg bg-white shadow-sm overflow-hidden">
+                <button
+                  onClick={() => toggleYear(year)}
+                  className="w-full flex items-center justify-between px-6 py-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <span className="text-lg font-semibold text-gray-900">{year}</span>
+                  {expandedYears.has(year) ? (
+                    <FiChevronUp className="h-5 w-5 text-gray-600" />
+                  ) : (
+                    <FiChevronDown className="h-5 w-5 text-gray-600" />
+                  )}
+                </button>
 
-                        <CollapseTransition isOpen={expandedMonths.has(monthKey)}>
-                          <div className="p-4 pt-2">
-                            <TransactionTable transactions={txns} showBalance={true} />
-                          </div>
-                        </CollapseTransition>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CollapseTransition>
-            </div>
-          ))}
-        </div>
-      </TransactionSection>
+                <CollapseTransition isOpen={expandedYears.has(year)}>
+                  <div className="space-y-4 p-4 pt-2">
+                    {Object.entries(months).map(([month, txns]) => {
+                      const monthKey = `${year}-${month}`;
+                      return (
+                        <div key={monthKey} className="border rounded-lg">
+                          <button
+                            onClick={() => toggleMonth(monthKey)}
+                            className="w-full flex items-center justify-between px-5 py-3 bg-white hover:bg-gray-50"
+                          >
+                            <span className="font-medium text-gray-700">{month}</span>
+                            {expandedMonths.has(monthKey) ? (
+                              <FiChevronUp className="h-5 w-5 text-gray-600" />
+                            ) : (
+                              <FiChevronDown className="h-5 w-5 text-gray-600" />
+                            )}
+                          </button>
+
+                          <CollapseTransition isOpen={expandedMonths.has(monthKey)}>
+                            <div className="p-4 pt-2">
+                              <TransactionTable transactions={txns} showBalance={true} />
+                            </div>
+                          </CollapseTransition>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CollapseTransition>
+              </div>
+            ))}
+          </div>
+        </TransactionSection>
+      )}
     </div>
   );
 };

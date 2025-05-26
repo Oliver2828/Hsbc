@@ -76,7 +76,7 @@ const scrollbarStyles = `
   }
 `;
 
-const Sidebar = () => {
+const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showScrollControls, setShowScrollControls] = useState(false);
   const location = useLocation();
@@ -137,28 +137,27 @@ const Sidebar = () => {
     {
       header: "Main",
       links: [
-        { path: "/user/dashboard", label: "Accounts", icon: FaHome },
-        { path: "/user/transactions", label: "Transactions", icon: FaHistory },
-        { path: "/user/deposit", label: "Deposit", icon: FaPlus },
-        { path: "/user/cards", label: "Cards", icon: FaCreditCard },
+        { path: "/admin/", label: "Account Details", icon: FaHome },
+        { path: "/admin/manage", label: "Change Password", icon: FaHistory },
+        
       ],
     },
-    {
-      header: "Transfers",
-      links: [
-        { path: "/user/local-transfer", label: "Local Transfers", icon: FaExchangeAlt },
-        { path: "/user/international-transfer", label: "International Transfers", icon: FaGlobe },
-      ],
-    },
-    {
-      header: "Services",
-      links: [
-        { path: "/user/pay-bills", label: "Bill Payment", icon: FaReceipt },
-        { path: "/user/loans", label: "Loan", icon: FaCoins },
-        { path: "/user/savings", label: "Savings", icon: FaPiggyBank },
-        { path: "/user/investments", label: "Investments", icon: FaSeedling },
-      ],
-    },
+    // {
+    //   header: "Transfers",
+    //   links: [
+    //     { path: "/user/local-transfer", label: "Local Transfers", icon: FaExchangeAlt },
+    //     { path: "/user/international-transfer", label: "International Transfers", icon: FaGlobe },
+    //   ],
+    // },
+    // {
+    //   header: "Services",
+    //   links: [
+    //     { path: "/user/pay-bills", label: "Bill Payment", icon: FaReceipt },
+    //     { path: "/user/loans", label: "Loan", icon: FaCoins },
+    //     { path: "/user/savings", label: "Savings", icon: FaPiggyBank },
+    //     { path: "/user/investments", label: "Investments", icon: FaSeedling },
+    //   ],
+    // },
   ];
 
   const renderLinks = () =>
@@ -369,4 +368,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default AdminSidebar;

@@ -14,7 +14,7 @@ const LocalTransferPage = () => {
           Domestic Transfers
         </h1>
         <p className="text-gray-600 text-lg">
-          Send money securely to any U.S. bank account within minutes
+          Send money securely to any Korea bank account within minutes
         </p>
       </header>
 

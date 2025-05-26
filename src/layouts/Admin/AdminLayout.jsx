@@ -1,21 +1,15 @@
-// src/layouts/Admin/AdminLayout.jsx
-import { Routes, Route } from 'react-router-dom'
-import AdminNavBar from '../../components/Admin-components/AdminNavBar'
-import AdminFooter from '../../components/Admin-components/AdminFooter'
+import { Routes, Route } from 'react-router-dom';
 import AdminDashboard from '../../pages/AdminDashboard'
-import ManageUsers from '../../components/Admin-components/ManagerUsers'
+import AdDashboard from '../../components/Admin-components/AdDashboard';
+import ManageUsers from '../../components/Admin-components/ManagerUsers' // Fixed import
 
-export default function AdminLayout() {
+export default function AdminLayout() { // Fixed function name
   return (
-    <>
-      <AdminNavBar />
-      <main>
-        <Routes>
-          <Route index element={<AdminDashboard />} />
-          <Route path="manage-users" element={<ManageUsers />} />
-        </Routes>
-      </main>
-      <AdminFooter />
-    </>
-  )
+    <Routes>
+      <Route path="/*" element={<AdminDashboard />}>
+        <Route index element={<AdDashboard />} />
+        <Route path="manage" element={<ManageUsers />} />
+      </Route>
+    </Routes>
+  );
 }

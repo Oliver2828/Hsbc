@@ -13,7 +13,7 @@ const CollapseTransition = ({ children, isOpen }) => (
 
 const TransactionSection = ({ title, children }) => (
   <div className="space-y-4">
-    <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+    <h2 className="text-2xl font-bold text-rose-800">{title}</h2>
     {children}
   </div>
 );
@@ -21,33 +21,33 @@ const TransactionSection = ({ title, children }) => (
 const TransactionTable = ({ transactions, showBalance = false }) => (
   <div className="overflow-x-auto rounded-lg shadow-sm">
     <table className="w-full">
-      <thead className="bg-gray-50">
+      <thead className="bg-rose-100">
         <tr>
-          {["Date", "Description", "Amount", "Type", ...(showBalance ? ["Balance"] : [])].map((header) => (
-            <th
-              key={header}
-              className="px-4 py-3 text-left text-sm font-semibold text-gray-700"
-            >
-              {header}
-            </th>
-          ))}
+          {["Date", "Description", "Amount", "Type", ...(showBalance ? ["Balance"] : [])].map(
+            (header) => (
+              <th
+                key={header}
+                className="px-4 py-3 text-left text-sm font-semibold text-rose-800"
+              >
+                {header}
+              </th>
+            )
+          )}
         </tr>
       </thead>
-      <tbody className="divide-y divide-gray-200">
+      <tbody className="divide-y divide-rose-200">
         {transactions.map((transaction) => (
           <tr
             key={`${transaction.date}-${transaction.balance}`}
-            className="hover:bg-gray-50 transition-colors"
+            className="hover:bg-rose-50 transition-colors"
           >
-            <td className="px-4 py-3 text-sm text-gray-700">{transaction.date}</td>
-            <td className="px-4 py-3 text-sm text-gray-600">
-              {transaction.description}
-            </td>
+            <td className="px-4 py-3 text-sm text-rose-700">{transaction.date}</td>
+            <td className="px-4 py-3 text-sm text-rose-600">{transaction.description}</td>
             <td className="px-4 py-3 text-sm text-right font-medium text-green-600">
               {transaction.amount}
             </td>
             <td className="px-4 py-3 text-right">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-200 text-rose-800">
                 {transaction.type}
               </span>
             </td>
@@ -167,7 +167,6 @@ const Transactions = () => {
   const accountStatement = useMemo(() => {
     const statement = [];
     let runningBalance = 2000;
-    // 555
 
     statement.push({
       date: "March 1, 2022",
@@ -205,56 +204,39 @@ const Transactions = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 bg-white">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Transaction History</h1>
-        <p className="text-gray-600 mb-6">Monitor your financial activity in real time</p>
+        <h1 className="text-4xl font-bold text-rose-800 mb-2">Transaction History</h1>
+        <p className="text-rose-600 mb-6">Monitor your financial activity in real time</p>
 
         <div className="relative max-w-md mx-auto">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-rose-400" />
           <input
             type="text"
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-10 pr-4 py-2 border border-rose-300 rounded-lg shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
             placeholder="Search transactions by date, type or amount"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.targetValue)}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
       {/* Tabs Navigation */}
       <div className="flex flex-wrap gap-2 justify-center mb-8">
-        <button
-          onClick={() => setActiveTab("recent")}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            activeTab === "recent"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          Recent Transactions
-        </button>
-        <button
-          onClick={() => setActiveTab("statement")}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            activeTab === "statement"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          Account Statement
-        </button>
-        <button
-          onClick={() => setActiveTab("history")}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            activeTab === "history"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          Full History
-        </button>
+        {["recent", "statement", "history"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeTab === tab
+                ? "bg-rose-500 text-white"
+                : "bg-rose-100 text-rose-800 hover:bg-rose-200"
+            }`}
+          >
+            {tab === "recent" ? "Recent Transactions" : tab === "statement" ? "Account Statement" : "Full History"}
+          </button>
+        ))}
       </div>
 
       {/* Tab Content */}
@@ -278,40 +260,28 @@ const Transactions = () => {
         <TransactionSection title="📚 Full Transaction History">
           <div className="space-y-4">
             {Object.entries(filteredData).map(([year, months]) => (
-              <div key={year} className="border rounded-lg bg-white shadow-sm overflow-hidden">
+              <div key={year}>
                 <button
+                  className="w-full text-left font-semibold text-xl text-rose-700 hover:text-rose-900 mb-2"
                   onClick={() => toggleYear(year)}
-                  className="w-full flex items-center justify-between px-6 py-4 bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <span className="text-lg font-semibold text-gray-900">{year}</span>
-                  {expandedYears.has(year) ? (
-                    <FiChevronUp className="h-5 w-5 text-gray-600" />
-                  ) : (
-                    <FiChevronDown className="h-5 w-5 text-gray-600" />
-                  )}
+                  {year} {expandedYears.has(year) ? <FiChevronUp /> : <FiChevronDown />}
                 </button>
-
                 <CollapseTransition isOpen={expandedYears.has(year)}>
-                  <div className="space-y-4 p-4 pt-2">
+                  <div className="space-y-2">
                     {Object.entries(months).map(([month, txns]) => {
-                      const monthKey = `${year}-${month}`;
+                      const key = `${year}-${month}`;
                       return (
-                        <div key={monthKey} className="border rounded-lg">
+                        <div key={key}>
                           <button
-                            onClick={() => toggleMonth(monthKey)}
-                            className="w-full flex items-center justify-between px-5 py-3 bg-white hover:bg-gray-50"
+                            className="w-full text-left font-medium text-rose-600 hover:text-rose-800"
+                            onClick={() => toggleMonth(key)}
                           >
-                            <span className="font-medium text-gray-700">{month}</span>
-                            {expandedMonths.has(monthKey) ? (
-                              <FiChevronUp className="h-5 w-5 text-gray-600" />
-                            ) : (
-                              <FiChevronDown className="h-5 w-5 text-gray-600" />
-                            )}
+                            {month} {expandedMonths.has(key) ? <FiChevronUp /> : <FiChevronDown />}
                           </button>
-
-                          <CollapseTransition isOpen={expandedMonths.has(monthKey)}>
-                            <div className="p-4 pt-2">
-                              <TransactionTable transactions={txns} showBalance={true} />
+                          <CollapseTransition isOpen={expandedMonths.has(key)}>
+                            <div className="bg-white rounded-lg shadow-md p-4">
+                              <TransactionTable transactions={txns} />
                             </div>
                           </CollapseTransition>
                         </div>
@@ -325,7 +295,6 @@ const Transactions = () => {
         </TransactionSection>
       )}
     </div>
-    // nn
   );
 };
 

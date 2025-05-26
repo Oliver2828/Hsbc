@@ -297,7 +297,7 @@ const Dashboard = () => {
               <FaCreditCard className="text-5xl text-gray-300 mx-auto mb-4" />
               <p className="text-neutral-500 mb-4">No cards linked yet</p>
               <button
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-2xl hover:opacity-90"
+                className="bg-gradient-to-r from-red-600 to-red-800 text-white px-6 py-2 rounded-2xl hover:opacity-90"
                 onClick={() => navigate("/user/cards")}
               >
                 Add a Card

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion } from 'framer-motion';
 import {
   FaHome,
   FaHistory,
@@ -90,6 +91,22 @@ const Sidebar = () => {
       setShowScrollControls(scrollHeight > clientHeight);
     }
   };
+
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState('English');
+  
+    const languages = [
+      { code: 'en',    name: 'English'    },
+      { code: 'ko',    name: 'Korean'     },
+      { code: 'es',    name: 'Spanish'    },
+      { code: 'bn',    name: 'Bengali'    },
+      { code: 'ru',    name: 'Russian'    },
+      { code: 'ja',    name: 'Japanese'   },
+      { code: 'de',    name: 'German'     },
+      { code: 'fr',    name: 'French'     },
+    
+      
+    ];
 
   const scroll = (direction) => {
     if (sidebarRef.current) {
@@ -196,15 +213,52 @@ const Sidebar = () => {
         ref={sidebarRef}
         className="hidden lg:block fixed w-64 h-screen bg-white shadow-xl z-[1040] p-4 overflow-y-auto custom-scrollbar"
       >
-        <div className='flex justify-end items-center pr-[40px]'>
-          <a href="/">
+        <div className='flex justify-end items-center pr-[40px] gap-[30px]'>
+          
             <div
               className='bg-[url(././assets/hsbc-logo.svg)]
                        bg-center bg-contain
                        w-[100px] h-[40px]
                        bg-no-repeat'
             />
-          </a>
+
+             <button 
+              className='flex items-center gap-1 text-sm cursor-pointer'
+              onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+            >
+              {selectedLanguage}
+              <motion.span
+                animate={{ rotate: isLanguageOpen ? 180 : 0 }}
+                className='text-xs'
+              >
+                ▼
+              </motion.span>
+            </button>
+
+            {isLanguageOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className='absolute right-0 mt-2 bg-black/90 p-2 pt-[250px] rounded shadow-lg min-w-[120px] z-50'
+              >
+                {languages.map((lang) => (
+                  <div
+                    key={lang.code}
+                    className='px-3 py-2 hover:bg-white/10 rounded-sm cursor-pointer text-sm text-white'
+                    onClick={() => {
+                      setSelectedLanguage(lang.name);
+                      setIsLanguageOpen(false);
+                      window.changeLanguage(lang.code);
+                    }}
+                  >
+                    {lang.name}
+                  </div>
+                ))}
+              </motion.div>
+            )}
+         
         </div>
         {renderLinks()}
         {showScrollControls && (
@@ -237,15 +291,52 @@ const Sidebar = () => {
             className="fixed lg:hidden w-64 h-screen bg-white shadow-xl z-[1050] p-4 overflow-y-auto custom-scrollbar"
           >
             <div className="flex justify-between items-center mb-8">
-              <div className='flex justify-end items-center pr-[40px]'>
-                  <a href="/">
+              <div className='flex justify-end items-center pr-[40px] gap-[30px]'>
+                  
                     <div
                       className='bg-[url(././assets/hsbc-logo.svg)]
                               bg-center bg-contain
                               w-[100px] h-[40px]
                               bg-no-repeat'
                     />
-                  </a>
+
+                    <button 
+              className='flex items-center gap-1 text-sm cursor-pointer'
+              onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+            >
+              {selectedLanguage}
+              <motion.span
+                animate={{ rotate: isLanguageOpen ? 180 : 0 }}
+                className='text-xs'
+              >
+                ▼
+              </motion.span>
+            </button>
+
+            {isLanguageOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className='absolute right-0 mt-2 bg-black/90 p-2 pt-[250px] rounded shadow-lg min-w-[120px] z-50'
+              >
+                {languages.map((lang) => (
+                  <div
+                    key={lang.code}
+                    className='px-3 py-2 hover:bg-white/10 rounded-sm cursor-pointer text-sm text-white'
+                    onClick={() => {
+                      setSelectedLanguage(lang.name);
+                      setIsLanguageOpen(false);
+                      window.changeLanguage(lang.code);
+                    }}
+                  >
+                    {lang.name}
+                  </div>
+                ))}
+              </motion.div>
+            )}
+                 
                 </div>
               <button
                 onClick={closeSidebar}

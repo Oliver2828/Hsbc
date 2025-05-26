@@ -237,10 +237,16 @@ const Sidebar = () => {
             className="fixed lg:hidden w-64 h-screen bg-white shadow-xl z-[1050] p-4 overflow-y-auto custom-scrollbar"
           >
             <div className="flex justify-between items-center mb-8">
-              <div className="flex items-center">
-                <FaUniversity className="text-red-500 text-2xl mr-3" />
-                <span className="font-bold text-gray-900 text-xl">Neon Trust Bank</span>
-              </div>
+              <div className='flex justify-end items-center pr-[40px]'>
+                  <a href="/">
+                    <div
+                      className='bg-[url(././assets/hsbc-logo.svg)]
+                              bg-center bg-contain
+                              w-[100px] h-[40px]
+                              bg-no-repeat'
+                    />
+                  </a>
+                </div>
               <button
                 onClick={closeSidebar}
                 className="text-3xl text-gray-600 hover:text-red-500 transition-colors"

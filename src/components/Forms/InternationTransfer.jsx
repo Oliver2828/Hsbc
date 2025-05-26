@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { FiUser, FiDollarSign, FiLock, FiCheckCircle, FiArrowLeft, FiArrowRight, FiGlobe, FiInfo } from "react-icons/fi";
 
-const InternationalTransferForm = ({ onClose }) => {
+const InternationalTransfer = ({ onClose }) => {
   const [formData, setFormData] = useState({
     recipientName: "",
     recipientAccount: "",
@@ -15,346 +16,312 @@ const InternationalTransferForm = ({ onClose }) => {
     reference: "",
     securityPin: "",
   });
+  const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [approvalStatus, setApprovalStatus] = useState("");
 
-  const [currentStep, setCurrentStep] = useState(1); // Tracks the current step of the form
-  const [errors, setErrors] = useState({}); // Tracks validation errors
-  const [isSubmitting, setIsSubmitting] = useState(false); // Tracks loading state
-  const [isSubmitted, setIsSubmitted] = useState(false); // Tracks if the transfer is submitted
-  const [approvalStatus, setApprovalStatus] = useState(""); // Tracks the approval status
-
-  // Automatically set the current date for transferDate
   useEffect(() => {
-    const currentDate = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
-    setFormData((prevData) => ({
-      ...prevData,
-      transferDate: currentDate,
-    }));
+    const today = new Date().toISOString().slice(0, 10);
+    setFormData((p) => ({ ...p, transferDate: today }));
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setErrors({
-      ...errors,
-      [name]: "", // Clear the error for the field being updated
-    });
+    setFormData((p) => ({ ...p, [name]: value }));
+    setErrors((e) => ({ ...e, [name]: "" }));
   };
 
   const validateStep = () => {
-    const stepErrors = {};
+    const err = {};
     if (currentStep === 1) {
-      if (!formData.recipientName) stepErrors.recipientName = "Recipient's name is required.";
-      if (!formData.recipientAccount) stepErrors.recipientAccount = "Recipient's account number is required.";
-      if (!formData.recipientBank) stepErrors.recipientBank = "Recipient's bank name is required.";
-      if (!formData.recipientSwift) stepErrors.recipientSwift = "SWIFT/BIC code is required.";
-      if (!formData.recipientCountry) stepErrors.recipientCountry = "Recipient's country is required.";
-    } else if (currentStep === 2) {
-      if (!formData.amount) stepErrors.amount = "Transfer amount is required.";
-    } else if (currentStep === 3) {
-      if (!formData.securityPin) stepErrors.securityPin = "Security PIN is required.";
+      if (!formData.recipientName) err.recipientName = "Required.";
+      if (!formData.recipientAccount) err.recipientAccount = "Required.";
+      if (!formData.recipientBank) err.recipientBank = "Required.";
+      if (!formData.recipientSwift) err.recipientSwift = "Required.";
+      if (!formData.recipientCountry) err.recipientCountry = "Required.";
     }
-    return stepErrors;
+    if (currentStep === 2 && !formData.amount) err.amount = "Required.";
+    if (currentStep === 3 && !formData.securityPin) err.securityPin = "Required.";
+    return err;
   };
 
   const handleNext = () => {
-    const stepErrors = validateStep();
-    if (Object.keys(stepErrors).length > 0) {
-      setErrors(stepErrors);
-    } else {
-      setCurrentStep((prevStep) => prevStep + 1);
-    }
+    const err = validateStep();
+    if (Object.keys(err).length) setErrors(err);
+    else setCurrentStep((s) => s + 1);
   };
-
-  const handlePrevious = () => {
-    setCurrentStep((prevStep) => prevStep - 1);
-  };
+  const handlePrevious = () => setCurrentStep((s) => s - 1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const stepErrors = validateStep();
-    if (Object.keys(stepErrors).length > 0) {
-      setErrors(stepErrors);
+    const err = validateStep();
+    if (Object.keys(err).length) {
+      setErrors(err);
       return;
     }
-
-    setIsSubmitting(true); // Start loading
-
-    const transferData = {
-      ...formData,
-    };
-
+    setIsSubmitting(true);
     try {
-      console.log("Sending international transfer data to backend:", transferData); // Debugging
-
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found. Please log in again.");
-      }
-
-      const response = await fetch("http://localhost:5000/api/auth/transfers/international", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        },
-        body: JSON.stringify(transferData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to process international transfer.");
-      }
-
-      console.log("International transfer submitted successfully"); // Debugging
-
-      // Simulate approval delay
-      setTimeout(() => {
-        setApprovalStatus("Approved"); // Update approval status
-        setIsSubmitted(true); // Mark as submitted
-        setTimeout(() => {
-          onClose(); // Close the modal after showing the success message
-        }, 3000); // Show success message for 3 seconds
-      }, 5000); // Simulate 5 seconds of loading
-    } catch (error) {
-      console.error("Error processing international transfer:", error);
-      setErrors({ general: error.message });
+      await new Promise((r) => setTimeout(r, 3000));
+      setApprovalStatus("Approved");
+      setIsSubmitted(true);
+      setTimeout(onClose, 3000);
+    } catch {
+      setErrors({ general: "Transfer failed." });
     } finally {
-      setIsSubmitting(false); // Stop loading
+      setIsSubmitting(false);
     }
   };
 
+  const steps = [
+    { id: 1, label: "Recipient", icon: <FiUser /> },
+    { id: 2, label: "Amount", icon: <FiDollarSign /> },
+    { id: 3, label: "Security", icon: <FiLock /> },
+  ];
+
   return (
-    <div className="modal-body mt-3">
-      {/* Loading State */}
+    <div className="p-6 max-w-xl mx-auto">
+      {/* Loading */}
       {isSubmitting && (
-        <div
-          className="d-flex flex-column justify-content-center align-items-center"
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            padding: "20px",
-          }}
-        >
-          <div
-            className="spinner-border"
-            style={{ width: "3rem", height: "3rem", color: "#1A3D8F" }}
-            role="status"
-          >
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <h5 className="mt-3" style={{ color: "#1A3D8F" }}>
-            Processing Transfer...
-          </h5>
+        <div className="fixed inset-0 bg-white/90 z-50 flex flex-col items-center justify-center">
+          <div className="animate-spin h-12 w-12 border-4 border-red-600 border-t-transparent rounded-full"></div>
+          <p className="mt-4 text-red-600 font-medium">Processing Transfer...</p>
         </div>
       )}
 
-      {/* Success Message */}
+      {/* Success */}
       {isSubmitted && (
-        <div
-          className="d-flex flex-column justify-content-center align-items-center"
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            padding: "20px",
-          }}
-        >
-          <i className="fas fa-check-circle" style={{ fontSize: "4rem", color: "#1A3D8F" }}></i>
-          <h4 className="mt-3" style={{ color: "#1A3D8F" }}>
-            Transfer Submitted Successfully!
-          </h4>
+        <div className="text-center py-12">
+          <FiCheckCircle className="mx-auto mb-4 text-green-500 text-5xl animate-pulse" />
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Transfer Initiated!</h2>
+          <p className="text-gray-600 mb-6">We’ll notify you once it’s complete.</p>
+          <button
+            onClick={onClose}
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition"
+          >
+            Back to Dashboard
+          </button>
         </div>
       )}
 
       {/* Form */}
       {!isSubmitting && !isSubmitted && (
-        <form onSubmit={handleSubmit}>
-          {/* Step 1: Recipient's Information */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Progress */}
+          <div className="relative mb-8">
+            <div className="absolute inset-y-5 left-0 right-0 h-1 bg-gray-200 rounded"></div>
+            <div
+              className="absolute inset-y-5 left-0 h-1 bg-red-600 rounded transition-all"
+              style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+            />
+            <div className="flex justify-between relative z-10">
+              {steps.map((s) => (
+                <div key={s.id} className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition ${
+                      currentStep >= s.id ? "bg-red-600 text-white" : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {s.icon}
+                  </div>
+                  <span
+                    className={`text-sm ${
+                      currentStep >= s.id ? "text-gray-800" : "text-gray-400"
+                    }`}
+                  >
+                    {s.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Step 1 */}
           {currentStep === 1 && (
-            <div>
-              <h6>Recipient's Information</h6>
-              <div className="form-group">
-                <label htmlFor="recipientName">Full Name</label>
+            <div className="space-y-6">
+              <div className="bg-red-50 p-4 rounded-lg flex items-start gap-3">
+                <FiInfo className="text-xl text-red-600 mt-1" />
+                <p className="text-sm text-gray-600">
+                  Enter recipient details accurately to avoid delays.
+                </p>
+              </div>
+              <div>
+                <label className="block mb-2 text-gray-700">Full Name</label>
                 <input
-                  type="text"
-                  id="recipientName"
                   name="recipientName"
                   value={formData.recipientName}
                   onChange={handleInputChange}
-                  className={`form-control ${errors.recipientName ? "is-invalid" : ""}`}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.recipientName ? "border-red-500" : "border-gray-200"
+                  } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  placeholder="Jane Doe"
                 />
-                {errors.recipientName && <div className="invalid-feedback">{errors.recipientName}</div>}
+                {errors.recipientName && (
+                  <p className="text-red-500 text-sm mt-1">{errors.recipientName}</p>
+                )}
               </div>
-              <div className="form-group">
-                <label htmlFor="recipientAccount">Account Number</label>
-                <input
-                  type="text"
-                  id="recipientAccount"
-                  name="recipientAccount"
-                  value={formData.recipientAccount}
-                  onChange={handleInputChange}
-                  className={`form-control ${errors.recipientAccount ? "is-invalid" : ""}`}
-                />
-                {errors.recipientAccount && <div className="invalid-feedback">{errors.recipientAccount}</div>}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-2 text-gray-700">Account Number</label>
+                  <input
+                    name="recipientAccount"
+                    value={formData.recipientAccount}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.recipientAccount ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                    placeholder="123456789"
+                  />
+                  {errors.recipientAccount && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientAccount}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block mb-2 text-gray-700">SWIFT/BIC Code</label>
+                  <input
+                    name="recipientSwift"
+                    value={formData.recipientSwift}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.recipientSwift ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                    placeholder="ABCDUSXX"
+                  />
+                  {errors.recipientSwift && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientSwift}</p>
+                  )}
+                </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="recipientBank">Bank Name</label>
-                <input
-                  type="text"
-                  id="recipientBank"
-                  name="recipientBank"
-                  value={formData.recipientBank}
-                  onChange={handleInputChange}
-                  className={`form-control ${errors.recipientBank ? "is-invalid" : ""}`}
-                />
-                {errors.recipientBank && <div className="invalid-feedback">{errors.recipientBank}</div>}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-2 text-gray-700">Bank Name</label>
+                  <input
+                    name="recipientBank"
+                    value={formData.recipientBank}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.recipientBank ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                    placeholder="International Bank"
+                  />
+                  {errors.recipientBank && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientBank}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block mb-2 text-gray-700">Country</label>
+                  <select
+                    name="recipientCountry"
+                    value={formData.recipientCountry}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.recipientCountry ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  >
+                    <option value="">Select Country</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="DE">Germany</option>
+                  </select>
+                  {errors.recipientCountry && (
+                    <p className="text-red-500 text-sm mt-1">{errors.recipientCountry}</p>
+                  )}
+                </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="recipientSwift">SWIFT/BIC Code</label>
-                <input
-                  type="text"
-                  id="recipientSwift"
-                  name="recipientSwift"
-                  value={formData.recipientSwift}
-                  onChange={handleInputChange}
-                  className={`form-control ${errors.recipientSwift ? "is-invalid" : ""}`}
-                />
-                {errors.recipientSwift && <div className="invalid-feedback">{errors.recipientSwift}</div>}
-              </div>
-              <div className="form-group">
-                <label htmlFor="recipientCountry">Recipient's Country</label>
-                <input
-                  type="text"
-                  id="recipientCountry"
-                  name="recipientCountry"
-                  value={formData.recipientCountry}
-                  onChange={handleInputChange}
-                  className={`form-control ${errors.recipientCountry ? "is-invalid" : ""}`}
-                />
-                {errors.recipientCountry && <div className="invalid-feedback">{errors.recipientCountry}</div>}
-              </div>
-              <button
-                type="button"
-                className="btn w-100 mt-3"
-                style={{ backgroundColor: "#1A3D8F", color: "white" }}
-                onClick={handleNext}
-              >
-                Next
-              </button>
             </div>
           )}
 
-          {/* Step 2: Transfer Details */}
+          {/* Step 2 */}
           {currentStep === 2 && (
-            <div>
-              <h6>Transfer Details</h6>
-              <div className="form-group">
-                <label htmlFor="amount">Amount</label>
-                <input
-                  type="text"
-                  id="amount"
-                  name="amount"
-                  value={formData.amount}
-                  onChange={handleInputChange}
-                  className={`form-control ${errors.amount ? "is-invalid" : ""}`}
-                />
-                {errors.amount && <div className="invalid-feedback">{errors.amount}</div>}
+            <div className="space-y-6">
+              <div>
+                <label className="block mb-2 text-gray-700">Amount (USD)</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-3 text-gray-400">$</span>
+                  <input
+                    name="amount"
+                    value={formData.amount}
+                    onChange={handleInputChange}
+                    className={`w-full pl-8 pr-4 py-3 rounded-lg border ${
+                      errors.amount ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                    placeholder="0.00"
+                  />
+                </div>
+                {errors.amount && (
+                  <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+                )}
               </div>
-              <div className="form-group">
-                <label htmlFor="currency">Currency</label>
-                <select
-                  id="currency"
-                  name="currency"
-                  value={formData.currency}
-                  onChange={handleInputChange}
-                  className="form-control"
-                >
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
-                  <option value="AUD">AUD</option>
-                  <option value="CAD">CAD</option>
-                  <option value="INR">INR</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="transferDate">Transfer Date</label>
-                <input
-                  type="date"
-                  id="transferDate"
-                  name="transferDate"
-                  value={formData.transferDate}
-                  onChange={handleInputChange}
-                  className="form-control"
-                  disabled // Prevent manual editing of the date
-                />
-              </div>
-              <div className="d-flex justify-content-between mt-3">
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ backgroundColor: "#1A3D8F", color: "white" }}
-                  onClick={handlePrevious}
-                >
-                  Previous
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ backgroundColor: "#1A3D8F", color: "white" }}
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
+              <div className="bg-red-50 p-4 rounded-lg">
+                <p className="text-sm text-red-800">
+                  Exchange rate: 1 USD = 0.85 EUR
+                </p>
               </div>
             </div>
           )}
 
-          {/* Step 3: Security Verification */}
+          {/* Step 3 */}
           {currentStep === 3 && (
-            <div>
-              <h6>Security Verification</h6>
-              <div className="form-group">
-                <label htmlFor="securityPin">Security PIN</label>
+            <div className="space-y-6">
+              <div className="bg-red-50 p-4 rounded-lg">
+                <p className="text-sm text-red-800">
+                  Confirm to initiate; can’t be undone.
+                </p>
+              </div>
+              <div>
+                <label className="block mb-2 text-gray-700">Security PIN</label>
                 <input
                   type="password"
-                  id="securityPin"
                   name="securityPin"
                   value={formData.securityPin}
                   onChange={handleInputChange}
-                  className={`form-control ${errors.securityPin ? "is-invalid" : ""}`}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.securityPin ? "border-red-500" : "border-gray-200"
+                  } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  placeholder="••••"
                 />
-                {errors.securityPin && <div className="invalid-feedback">{errors.securityPin}</div>}
-              </div>
-              <div className="d-flex justify-content-between mt-3">
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ backgroundColor: "#1A3D8F", color: "white" }}
-                  onClick={handlePrevious}
-                >
-                  Previous
-                </button>
-                <button
-                  type="submit"
-                  className="btn"
-                  style={{ backgroundColor: "#1A3D8F", color: "white" }}
-                >
-                  Submit Transfer
-                </button>
+                {errors.securityPin && (
+                  <p className="text-red-500 text-sm mt-1">{errors.securityPin}</p>
+                )}
               </div>
             </div>
           )}
+
+          {/* Navigation */}
+          <div className="flex justify-between pt-4 border-t border-gray-200">
+            {currentStep > 1 && (
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="flex items-center text-gray-600 hover:text-red-600 transition"
+              >
+                <FiArrowLeft className="mr-2" /> Back
+              </button>
+            )}
+            <div className="ml-auto">
+              {currentStep < 3 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center transition"
+                >
+                  Continue <FiArrowRight className="ml-2" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center transition"
+                >
+                  Confirm <FiCheckCircle className="ml-2" />
+                </button>
+              )}
+            </div>
+          </div>
         </form>
       )}
     </div>
   );
 };
 
-export default InternationalTransferForm;
+export default InternationalTransfer;

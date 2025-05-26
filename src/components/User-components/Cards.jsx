@@ -51,7 +51,7 @@ export default function Cards() {
         color,
         number: "1234 5678 9012 3456",
         expiry: "12/28",
-        holder: "Paschal Obunikechukwu",
+        holder: "Kings Igboanusi",
         cvv: "123",
       };
       const updatedCards = { ...cards, [type.toLowerCase()]: newCard };

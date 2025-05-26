@@ -397,7 +397,7 @@ const Dashboard = () => {
 
       {activeModal === "localTransfer" && (
         <Modal isOpen onClose={() => setActiveModal(null)} title="Local Transfer">
-          <LocalTransfer />
+          <LocalTransferForm />
         </Modal>
       )}
 

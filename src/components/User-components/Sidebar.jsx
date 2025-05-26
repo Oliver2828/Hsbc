@@ -120,7 +120,7 @@ const Sidebar = () => {
     {
       header: "Main",
       links: [
-        { path: "/user/dashboard", label: "Dashboard", icon: FaHome },
+        { path: "/user/dashboard", label: "Accounts", icon: FaHome },
         { path: "/user/transactions", label: "Transactions", icon: FaHistory },
         { path: "/user/deposit", label: "Deposit", icon: FaPlus },
         { path: "/user/cards", label: "Cards", icon: FaCreditCard },

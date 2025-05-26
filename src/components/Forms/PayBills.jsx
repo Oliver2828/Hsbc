@@ -10,14 +10,13 @@ const PayBills = ({ onClose }) => {
     securityPin: "",
   });
 
-  const [currentStep, setCurrentStep] = useState(1); // Tracks the current step of the form
-  const [errors, setErrors] = useState({}); // Tracks validation errors
-  const [isSubmitting, setIsSubmitting] = useState(false); // Tracks loading state
-  const [isSubmitted, setIsSubmitted] = useState(false); // Tracks if the payment is submitted
+  const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Automatically set the current date for paymentDate
   useEffect(() => {
-    const currentDate = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
+    const currentDate = new Date().toISOString().slice(0, 10);
     setFormData((prevData) => ({
       ...prevData,
       paymentDate: currentDate,
@@ -26,14 +25,8 @@ const PayBills = ({ onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setErrors({
-      ...errors,
-      [name]: "", // Clear the error for the field being updated
-    });
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const validateStep = () => {
@@ -54,12 +47,12 @@ const PayBills = ({ onClose }) => {
     if (Object.keys(stepErrors).length > 0) {
       setErrors(stepErrors);
     } else {
-      setCurrentStep((prevStep) => prevStep + 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
-    setCurrentStep((prevStep) => prevStep - 1);
+    setCurrentStep((prev) => prev - 1);
   };
 
   const handleSubmit = (e) => {
@@ -68,191 +61,166 @@ const PayBills = ({ onClose }) => {
     if (Object.keys(stepErrors).length > 0) {
       setErrors(stepErrors);
     } else {
-      setIsSubmitting(true); // Start loading
+      setIsSubmitting(true);
       setTimeout(() => {
-        setIsSubmitting(false); // Stop loading
-        setIsSubmitted(true); // Mark as submitted
-        setTimeout(() => {
-          onClose(); // Close the modal after showing the success message
-        }, 3000); // Show success message for 3 seconds
-      }, 5000); // Simulate 5 seconds of loading
+        setIsSubmitting(false);
+        setIsSubmitted(true);
+        setTimeout(() => onClose(), 3000);
+      }, 5000);
     }
   };
 
   return (
-    <div className="mt-4">
+    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-[#B91C1C]">Pay Bills</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+
+      {/* Progress Steps */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          {[1, 2, 3].map((step) => (
+            <React.Fragment key={step}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center 
+                ${currentStep >= step ? "bg-[#B91C1C] text-white" : "bg-gray-200 text-gray-500"}`}>
+                {step}
+              </div>
+              {step < 3 && (
+                <div className={`flex-1 h-1 mx-1 ${currentStep > step ? "bg-[#B91C1C]" : "bg-gray-200"}`}></div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="flex justify-between mt-2 text-xs text-gray-500">
+          <span>Biller Info</span>
+          <span>Payment</span>
+          <span>Confirm</span>
+        </div>
+      </div>
+
       {/* Loading State */}
       {isSubmitting && (
-        <div className="w-full h-full flex flex-col justify-center items-center bg-white rounded-lg p-5">
-          <div
-            className="w-12 h-12 border-4 border-[#1A3D8F] border-t-transparent rounded-full animate-spin"
-            role="status"
-          >
-            <span className="sr-only">Loading...</span>
-          </div>
-          <h5 className="mt-3 text-[#1A3D8F]">Processing Payment...</h5>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#B91C1C] border-t-transparent"></div>
+          <p className="mt-4 text-[#B91C1C] font-medium">Processing Payment...</p>
         </div>
       )}
 
       {/* Success Message */}
       {isSubmitted && (
-        <div className="w-full h-full flex flex-col justify-center items-center bg-white rounded-lg p-5">
-          <i className="fas fa-check-circle text-4xl text-[#1A3D8F]"></i>
-          <h4 className="mt-4 text-[#1A3D8F]">Payment Submitted Successfully!</h4>
+        <div className="flex flex-col items-center justify-center py-12">
+          <svg className="w-16 h-16 text-green-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">Payment Successful!</h3>
+          <p className="text-gray-600">Your payment has been processed.</p>
         </div>
       )}
 
       {/* Form */}
       {!isSubmitting && !isSubmitted && (
         <form onSubmit={handleSubmit}>
-          {/* Step 1: Biller Information */}
           {currentStep === 1 && (
-            <div className="space-y-4">
-              <h6 className="text-lg font-semibold">Biller Information</h6>
+            <div className="space-y-6">
               <div>
-                <label htmlFor="billerName" className="block text-sm font-medium text-gray-700">
-                  Biller Name
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Biller Name</label>
                 <input
                   type="text"
-                  id="billerName"
                   name="billerName"
                   value={formData.billerName}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
-                    errors.billerName ? "border-red-500" : "border-gray-300"
-                  } shadow-sm focus:border-[#1A3D8F] focus:ring-[#1A3D8F]`}
+                  className={`w-full px-4 py-3 mt-1 border rounded-lg ${errors.billerName ? "border-red-500" : "border-gray-300 focus:border-[#B91C1C]"} focus:ring-2 focus:ring-[#B91C1C]/30`}
+                  placeholder="Enter biller name"
                 />
                 {errors.billerName && <p className="mt-1 text-sm text-red-600">{errors.billerName}</p>}
               </div>
+
               <div>
-                <label htmlFor="billerAccount" className="block text-sm font-medium text-gray-700">
-                  Account Number
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Biller Account</label>
                 <input
                   type="text"
-                  id="billerAccount"
                   name="billerAccount"
                   value={formData.billerAccount}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
-                    errors.billerAccount ? "border-red-500" : "border-gray-300"
-                  } shadow-sm focus:border-[#1A3D8F] focus:ring-[#1A3D8F]`}
+                  className={`w-full px-4 py-3 mt-1 border rounded-lg ${errors.billerAccount ? "border-red-500" : "border-gray-300 focus:border-[#B91C1C]"} focus:ring-2 focus:ring-[#B91C1C]/30`}
+                  placeholder="Enter biller account"
                 />
-                {errors.billerAccount && (
-                  <p className="mt-1 text-sm text-red-600">{errors.billerAccount}</p>
-                )}
+                {errors.billerAccount && <p className="mt-1 text-sm text-red-600">{errors.billerAccount}</p>}
               </div>
+
               <button
                 type="button"
-                className="w-full mt-3 bg-[#1A3D8F] text-white py-2 px-4 rounded-md hover:bg-[#15306f] transition-colors"
                 onClick={handleNext}
+                className="w-full bg-[#B91C1C] text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
               >
-                Next
+                Continue
               </button>
             </div>
           )}
 
-          {/* Step 2: Payment Details */}
           {currentStep === 2 && (
-            <div className="space-y-4">
-              <h6 className="text-lg font-semibold">Payment Details</h6>
+            <div className="space-y-6">
               <div>
-                <label htmlFor="amountDue" className="block text-sm font-medium text-gray-700">
-                  Amount Due
-                </label>
-                <input
-                  type="text"
-                  id="amountDue"
-                  name="amountDue"
-                  value={formData.amountDue}
-                  onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
-                    errors.amountDue ? "border-red-500" : "border-gray-300"
-                  } shadow-sm focus:border-[#1A3D8F] focus:ring-[#1A3D8F]`}
-                />
+                <label className="block text-sm font-medium text-gray-700">Amount Due</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    name="amountDue"
+                    value={formData.amountDue}
+                    onChange={handleInputChange}
+                    className={`w-full pl-8 pr-4 py-3 mt-1 border rounded-lg ${errors.amountDue ? "border-red-500" : "border-gray-300 focus:border-[#B91C1C]"} focus:ring-2 focus:ring-[#B91C1C]/30`}
+                    placeholder="0.00"
+                  />
+                </div>
                 {errors.amountDue && <p className="mt-1 text-sm text-red-600">{errors.amountDue}</p>}
               </div>
+
               <div>
-                <label htmlFor="paymentDate" className="block text-sm font-medium text-gray-700">
-                  Payment Date
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Payment Date</label>
                 <input
                   type="date"
-                  id="paymentDate"
                   name="paymentDate"
                   value={formData.paymentDate}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm bg-gray-100 cursor-not-allowed"
                   disabled
+                  className="w-full px-4 py-3 mt-1 border border-gray-200 bg-gray-100 rounded-lg text-gray-600"
                 />
               </div>
-              <div>
-                <label htmlFor="paymentType" className="block text-sm font-medium text-gray-700">
-                  Payment Type
-                </label>
-                <select
-                  id="paymentType"
-                  name="paymentType"
-                  value={formData.paymentType}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-[#1A3D8F] focus:ring-[#1A3D8F]"
-                >
-                  <option value="One-Time">One-Time</option>
-                  <option value="Recurring">Recurring</option>
-                </select>
-              </div>
-              <div className="flex justify-between mt-4">
-                <button
-                  type="button"
-                  className="bg-[#1A3D8F] text-white py-2 px-4 rounded-md hover:bg-[#15306f] transition-colors"
-                  onClick={handlePrevious}
-                >
-                  Previous
+
+              <div className="flex gap-4">
+                <button type="button" onClick={handlePrevious} className="w-1/2 py-3 border rounded-lg text-gray-700 hover:bg-gray-100">
+                  Back
                 </button>
-                <button
-                  type="button"
-                  className="bg-[#1A3D8F] text-white py-2 px-4 rounded-md hover:bg-[#15306f] transition-colors"
-                  onClick={handleNext}
-                >
-                  Next
+                <button type="button" onClick={handleNext} className="w-1/2 bg-[#B91C1C] text-white py-3 rounded-lg hover:bg-red-700">
+                  Continue
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Security Verification */}
           {currentStep === 3 && (
-            <div className="space-y-4">
-              <h6 className="text-lg font-semibold">Security Verification</h6>
+            <div className="space-y-6">
               <div>
-                <label htmlFor="securityPin" className="block text-sm font-medium text-gray-700">
-                  Security PIN
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Security PIN</label>
                 <input
                   type="password"
-                  id="securityPin"
                   name="securityPin"
                   value={formData.securityPin}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
-                    errors.securityPin ? "border-red-500" : "border-gray-300"
-                  } shadow-sm focus:border-[#1A3D8F] focus:ring-[#1A3D8F]`}
+                  className={`w-full px-4 py-3 mt-1 border rounded-lg ${errors.securityPin ? "border-red-500" : "border-gray-300 focus:border-[#B91C1C]"} focus:ring-2 focus:ring-[#B91C1C]/30`}
+                  placeholder="••••"
+                  maxLength="4"
                 />
                 {errors.securityPin && <p className="mt-1 text-sm text-red-600">{errors.securityPin}</p>}
               </div>
-              <div className="flex justify-between mt-4">
-                <button
-                  type="button"
-                  className="bg-[#1A3D8F] text-white py-2 px-4 rounded-md hover:bg-[#15306f] transition-colors"
-                  onClick={handlePrevious}
-                >
-                  Previous
+
+              <div className="flex gap-4">
+                <button type="button" onClick={handlePrevious} className="w-1/2 py-3 border rounded-lg text-gray-700 hover:bg-gray-100">
+                  Back
                 </button>
-                <button
-                  type="submit"
-                  className="bg-[#1A3D8F] text-white py-2 px-4 rounded-md hover:bg-[#15306f] transition-colors"
-                >
+                <button type="submit" className="w-1/2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
                   Confirm Payment
                 </button>
               </div>

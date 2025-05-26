@@ -77,11 +77,11 @@ const Dashboard = () => {
   //   fetchUserData();
 
     // Mocked user data
-    setUsername("John Doe");
+    setUsername("Alyssa Alluraye");
     setAccounts([
-      { number: "1234567890", type: "Savings", balance: 10500.75 },
-      { number: "9876543210", type: "Checking", balance: 2500.0 },
-      { number: "9876543234", type: "Investment", balance: 7200.5 },
+      { number: "456*******", type: "Savings", balance: 45500.75 },
+      { number: "987*******", type: "Checking", balance: 7500.0 },
+      // { number: "9876543234", type: "Investment", balance: 7200.5 },
     ]);
     const mockTx = [
       {

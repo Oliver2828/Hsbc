@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../../components/Modal/Modal";
 
-const Investment = () => {
+const Investments = () => {
   const [isTransferModalOpen, setTransferModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [transferAmount, setTransferAmount] = useState("");
@@ -42,38 +42,38 @@ const Investment = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
       {/* Overview */}
-      <h2 className="text-2xl font-bold mb-4 text-rose-600">Your Investment Overview</h2>
-      <div className="bg-gray-50 p-4 rounded-lg shadow mb-6">
-        <h5 className="text-lg font-semibold text-rose-600 mb-1">Total Investment Balance</h5>
-        <p className="text-2xl font-bold text-rose-600">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-rose-600">Your Investment Overview</h2>
+      <div className="bg-gray-50 p-4 sm:p-6 rounded-lg shadow mb-6">
+        <h5 className="text-base sm:text-lg font-semibold text-rose-600 mb-1">Total Investment Balance</h5>
+        <p className="text-xl sm:text-2xl font-bold text-rose-600">
           ${totalInvestments.toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </p>
       </div>
 
       {/* Investment Breakdown */}
-      <h4 className="text-xl font-semibold text-rose-600 mb-3">Investment Breakdown</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <h4 className="text-lg sm:text-xl font-semibold text-rose-600 mb-3">Investment Breakdown</h4>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {investmentAccounts
           .filter((account) => account.type !== "Investment Account")
           .map((account) => (
             <div key={account.id} className="bg-rose-600 text-white p-4 rounded-lg shadow">
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1 sm:gap-0">
                 <h5 className="text-lg font-bold">{account.type}</h5>
                 <span className="text-sm">{account.number}</span>
               </div>
               <p className="text-xl font-bold">
                 ${account.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
-              <div className="flex gap-2 mt-4">
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
                 <button
-                  className="border border-white text-white rounded-full px-3 py-1 text-sm hover:bg-white hover:text-rose-600"
+                  className="border border-white text-white rounded-full px-3 py-1 text-sm hover:bg-white hover:text-rose-600 transition"
                   onClick={() => handleTransferClick(account)}
                 >
                   Add Funds
                 </button>
-                <button className="border border-white text-white rounded-full px-3 py-1 text-sm hover:bg-white hover:text-rose-600">
+                <button className="border border-white text-white rounded-full px-3 py-1 text-sm hover:bg-white hover:text-rose-600 transition">
                   Details
                 </button>
               </div>
@@ -83,8 +83,8 @@ const Investment = () => {
 
       {/* Tips */}
       <div className="mt-8">
-        <h4 className="text-xl font-semibold text-rose-600 mb-3">Investment Tips</h4>
-        <ul className="space-y-2 bg-white p-4 rounded-lg shadow">
+        <h4 className="text-lg sm:text-xl font-semibold text-rose-600 mb-3">Investment Tips</h4>
+        <ul className="space-y-2 bg-white p-4 sm:p-6 rounded-lg shadow text-sm sm:text-base">
           <li>
             <strong>Diversify:</strong> Spread your investments across different asset classes to reduce risk.
           </li>
@@ -102,7 +102,7 @@ const Investment = () => {
 
       {/* Transactions */}
       <div className="mt-8">
-        <h4 className="text-xl font-semibold text-rose-600 mb-3">Recent Transactions</h4>
+        <h4 className="text-lg sm:text-xl font-semibold text-rose-600 mb-3">Recent Transactions</h4>
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white rounded-lg shadow text-sm">
             <thead>
@@ -161,4 +161,4 @@ const Investment = () => {
   );
 };
 
-export default Investment;
+export default Investments;

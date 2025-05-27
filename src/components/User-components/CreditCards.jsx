@@ -45,10 +45,10 @@ const CreditCard = ({ card }) => {
   const CardIcon = CardIcons[card.brand] || FaCcVisa;
 
   return (
-    <div className="flex flex-col items-center group">
+    <div className="flex flex-col items-center px-4 sm:px-6 md:px-0 w-full">
       <motion.div
         ref={cardRef}
-        className="relative w-80 h-52 perspective-1000 cursor-pointer"
+        className="relative w-full max-w-[20rem] h-52 sm:h-60 md:h-64 perspective-1000 cursor-pointer"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6 }}
         style={{ transformStyle: "preserve-3d" }}
@@ -62,13 +62,9 @@ const CreditCard = ({ card }) => {
             overflow-hidden backface-hidden
           `}
         >
-          <div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_var(--x,_var(--y)),white/20,transparent)] pointer-events-none"
-          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_var(--x,_var(--y)),white/20,transparent)] pointer-events-none" />
           <div className="absolute top-4 left-0 w-full h-12 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-50" />
-          <div
-            className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,rgba(255,255,255,0.1)_5px,rgba(255,255,255,0.1)_10px)]"
-          />
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,rgba(255,255,255,0.1)_5px,rgba(255,255,255,0.1)_10px)]" />
           <div className="relative z-10 flex flex-col justify-between h-full">
             <div className="flex justify-between items-start">
               <div className="space-y-2">
@@ -84,23 +80,24 @@ const CreditCard = ({ card }) => {
             <div className="space-y-4 text-white">
               <div className="relative">
                 <div className="absolute -top-1 left-0 w-4 h-4 bg-white/20 rounded-full shadow-sm" />
-                <p className="text-xl font-mono tracking-wider pl-6 drop-shadow-lg">
+                <p className="text-lg sm:text-xl font-mono tracking-wider pl-6 drop-shadow-lg">
                   {showNumber ? card.number : "•••• •••• •••• 3456"}
                 </p>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <div>
-                  <p className="text-xs opacity-80 mb-1 font-light">CARD HOLDER</p>
+                  <p className="text-[10px] opacity-80 mb-1 font-light">CARD HOLDER</p>
                   <p className="font-semibold tracking-widest">{card.holder}</p>
                 </div>
                 <div>
-                  <p className="text-xs opacity-80 mb-1 font-light">EXPIRES</p>
+                  <p className="text-[10px] opacity-80 mb-1 font-light">EXPIRES</p>
                   <p className="font-semibold tracking-widest">{card.expiry}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
         {/* Back Side */}
         <div className="absolute w-full h-full rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl backface-hidden rotate-y-180 p-6 overflow-hidden">
           <div className="absolute top-6 -left-2 w-[110%] h-10 bg-gradient-to-r from-black via-gray-700 to-black transform -rotate-1 shadow-inner" />
@@ -139,7 +136,8 @@ const CreditCard = ({ card }) => {
           </div>
         </div>
       </motion.div>
-      <div className="mt-6 flex gap-3">
+
+      <div className="mt-6 flex flex-wrap justify-center gap-3 w-full">
         <button
           onClick={() => setShowNumber((prev) => !prev)}
           className="px-4 py-2 text-sm font-medium flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all border border-white/10"

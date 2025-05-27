@@ -54,7 +54,7 @@ function HomeSub() {
     }
   }
 
-  const items = [
+   const items = [
     { label: 'HSBC Korea',     path: '/korea' },
     { label: 'Global Markets', path: '/market' },
     { label: 'Global Banking', path: '/banking' },
@@ -69,14 +69,16 @@ function HomeSub() {
   return (
     <>
       <motion.div 
-        className="bg-white border-b border-gray-200 grid h-[10vh]"
+        className="bg-white border-b border-gray-200 h-auto md:h-[10vh] py-3 md:py-0"
         variants={containerAnimation}
         initial="hidden"
         animate="visible"
       >
-        <div className="flex items-center">
+        <div className="flex items-center justify-center md:justify-start">
           <motion.ul 
-            className="flex gap-[30px] text-[17px] pl-[95px] font-serif"
+            className="flex flex-wrap justify-center gap-4 md:gap-8 
+                       text-sm md:text-base lg:text-[17px] 
+                       px-4 md:pl-16 lg:pl-[95px] font-serif"
             variants={listVariants}
             initial="hidden"
             animate="visible"
@@ -87,17 +89,22 @@ function HomeSub() {
                 variants={itemVariants}
                 whileHover={hoverEffect}
                 whileTap={tapEffect}
+                className="relative  px-2 py-1 md:px-0 md:py-4"
               >
                 <a
                   href={path}
-                  className="relative block"
+                  className="block relative"
                   onClick={e => handleLinkClick(e, path)}
                 >
                   {label}
                   <motion.span 
-                    className="absolute bottom-0 left-0 w-0 h-px bg-current transition-all duration-300"
+                    className="absolute bottom-0 left-0 w-0 h-px bg-current 
+                              transition-all duration-300 md:block hidden"
                     whileHover={{ width: '100%' }}
                   />
+                  {/* Mobile underline (always visible) */}
+                  <span className="absolute bottom-0 left-0 w-full h-px bg-gray-200 
+                                 md:hidden block" />
                 </a>
               </motion.li>
             ))}

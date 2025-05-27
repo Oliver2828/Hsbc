@@ -27,22 +27,21 @@ function HomeFooter() {
   };
 
   return (
-    <>
     <motion.div 
-      className='bg-black min-h-[70vh] grid grid-rows-12'
+      className='bg-black min-h-[50vh] md:min-h-[70vh] grid grid-rows-[auto_1fr_auto] md:grid-rows-12'
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Top Section */}
-      <div className='flex items-center row-span-1 border-b border-white'>
-        <motion.ul className='flex gap-[30px] text-white pl-[95px] font-serif'>
+      <div className='flex items-center py-4 md:py-0 md:row-span-1 border-b border-white'>
+        <motion.ul className='flex flex-wrap gap-4 md:gap-[30px] text-white px-4 md:pl-[95px] font-serif'>
           {["Contact us", "Find a branch", "About Hsbc"].map((item, index) => (
             <motion.li 
               key={index}
               variants={listItemVariants}
               custom={index}
-              className='relative hover:underline cursor-pointer'
+              className='relative hover:underline cursor-pointer text-sm md:text-base'
             >
               <a href="" className='block pb-1 relative'>
                 {item}
@@ -60,11 +59,11 @@ function HomeFooter() {
       </div>
 
       {/* Middle Section */}
-      <div className='row-span-9 grid grid-cols-12 border-b border-white'>
-        <div className='col-span-6'>
-          <motion.ul className='flex flex-col gap-[5px] text-white text-[14px] pl-[95px] font-serif pt-[30px]'>
+      <div className='row-span-9 grid grid-cols-1 md:grid-cols-12 border-b border-white'>
+        <div className='col-span-1 md:col-span-6 py-8 md:py-0'>
+          <motion.ul className='flex flex-col gap-2 md:gap-[5px] text-white text-sm md:text-[14px] px-4 md:pl-[95px] font-serif md:pt-[30px]'>
             <motion.li 
-              className='text-[20px] font-semibold pb-4'
+              className='text-lg md:text-[20px] font-semibold pb-4'
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -81,7 +80,6 @@ function HomeFooter() {
               "Regulation on Prevention of Unsound Sales Activity (51KB, PDF)",
               "Personal Information Processing Guideline (271KB, PDF)",
               "Disclaimer",
-              // ... other items
             ].map((item, index) => (
               <motion.li
                 key={index}
@@ -103,10 +101,10 @@ function HomeFooter() {
           </motion.ul>
         </div>
 
-        <div className='pl-[30px] pt-[30px] col-span-6'>
-          <motion.ul className='flex flex-col text-[14px] gap-[5px] text-white font-serif'>
+        <div className='px-4 md:pl-[30px] py-8 md:py-0 col-span-1 md:col-span-6'>
+          <motion.ul className='flex flex-col gap-2 md:gap-[5px] text-sm md:text-[14px] text-white font-serif'>
             <motion.li 
-              className='text-[20px] font-semibold pb-4'
+              className='text-lg md:text-[20px] font-semibold pb-4'
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -136,9 +134,9 @@ function HomeFooter() {
       </div>
 
       {/* Bottom Section */}
-      <div className='text-white grid grid-cols-2 row-span-2 font-serif'>
-        <div className='flex items-center text-[15px]'>
-          <motion.ul className='flex gap-[30px] pl-[100px]'>
+      <div className='text-white grid grid-cols-1 md:grid-cols-2 row-span-2 font-serif py-4 md:py-0'>
+        <div className='flex items-center justify-center md:justify-start'>
+          <motion.ul className='flex flex-wrap gap-4 md:gap-[30px] px-4 md:pl-[100px] text-sm md:text-[15px]'>
             {["Terms of use", "Hyperlink policy", "Career", "FAQ"].map((item, index) => (
               <motion.li
                 key={index}
@@ -160,7 +158,7 @@ function HomeFooter() {
           </motion.ul>
         </div>
         <motion.div 
-          className='flex items-center pl-[70px] text-[14px]'
+          className='flex items-center justify-center md:justify-start px-4 md:pl-[70px] mt-4 md:mt-0 text-center md:text-left text-sm md:text-[14px]'
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
@@ -169,7 +167,6 @@ function HomeFooter() {
         </motion.div>
       </div>
     </motion.div>
-    </>
   )
 }
 

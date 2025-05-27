@@ -25,23 +25,23 @@ function KoreaNavBar() {
 
   return (
     <>
-      <div className='bg-black grid grid-cols-2 h-[5vh]'>
-        <div className='underline text-[13px] text-white flex items-center pl-[125px]'>
+      <div className='bg-black grid grid-cols-2 h-auto md:h-[5vh] py-2 md:py-0 px-4 md:px-0'>
+        <div className='underline text-xs md:text-[13px] text-white flex items-center md:pl-[125px]'>
           <p>Business</p>
         </div>
         
-        <div className='flex text-white items-center justify-end gap-[20px] pr-[125px]'>
+        <div className='flex text-white items-center justify-end gap-4 md:gap-[20px] pr-0 md:pr-[125px]'>
           <div className='flex items-center gap-2'>
             <IoSearch 
-              className='cursor-pointer' 
+              className='cursor-pointer text-lg md:text-xl' 
               onClick={() => setShowSearchInput(!showSearchInput)}
             />
             {showSearchInput && (
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: '150px' }}
+                animate={{ width: ['150px', '100%'] }}
                 transition={{ duration: 0.3 }}
-                className='overflow-hidden'
+                className='hidden md:block overflow-hidden'
               >
                 <input
                   type="text"
@@ -52,9 +52,20 @@ function KoreaNavBar() {
             )}
           </div>
 
+          {/* Mobile Search Input */}
+          {showSearchInput && (
+            <div className='md:hidden absolute top-full left-0 right-0 bg-black p-2'>
+              <input
+                type="text"
+                placeholder="Search..."
+                className='bg-transparent border-b border-white text-white focus:outline-none w-full'
+              />
+            </div>
+          )}
+
           <div className='relative'>
             <button 
-              className='flex items-center gap-1 text-sm cursor-pointer'
+              className='flex items-center gap-1 text-xs md:text-sm cursor-pointer'
               onClick={() => setIsLanguageOpen(!isLanguageOpen)}
             >
               {selectedLanguage}
@@ -77,7 +88,7 @@ function KoreaNavBar() {
                 {languages.map((lang) => (
                   <div
                     key={lang.code}
-                    className='px-3 py-2 hover:bg-white/10 rounded-sm cursor-pointer text-sm text-white'
+                    className='px-3 py-2 hover:bg-white/10 rounded-sm cursor-pointer text-xs md:text-sm text-white'
                     onClick={() => {
                       setSelectedLanguage(lang.name);
                       setIsLanguageOpen(false);

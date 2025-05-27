@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FiUser, FiDollarSign, FiLock, FiCheckCircle, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
-const LocalTransfer = ({ onClose, userAccounts }) => {
+const LocalTransfer = ({ onClose, userAccounts, userEmail }) => {
+  // Debug: Show the accounts prop
+  console.log("userAccounts prop in LocalTransferForm:", userAccounts);
+
   const [formData, setFormData] = useState({
     recipientName: "",
     recipientAccount: "",
@@ -13,13 +16,20 @@ const LocalTransfer = ({ onClose, userAccounts }) => {
     reference: "",
     securityPin: "",
   });
+
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [approvalStatus, setApprovalStatus] = useState("Pending");
 
-  // set today's date
+  // For verification step
+  const [showVerification, setShowVerification] = useState(false);
+  const [transferId, setTransferId] = useState(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationError, setVerificationError] = useState("");
+
+  // Set today's date on mount
   useEffect(() => {
     const currentDate = new Date().toISOString().slice(0, 10);
     setFormData((prev) => ({ ...prev, transferDate: currentDate }));
@@ -48,37 +58,107 @@ const LocalTransfer = ({ onClose, userAccounts }) => {
 
   const handleNext = () => {
     const stepErrs = validateStep();
-    if (Object.keys(stepErrs).length) setErrors(stepErrs);
-    else setCurrentStep((s) => s + 1);
+    if (Object.keys(stepErrs).length) {
+      setErrors(stepErrs);
+      console.log('Validation errors:', stepErrs);
+    } else {
+      setCurrentStep((s) => s + 1);
+    }
   };
 
   const handlePrevious = () => setCurrentStep((s) => s - 1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit clicked, currentStep:", currentStep, formData);
     const stepErrs = validateStep();
     if (Object.keys(stepErrs).length) {
       setErrors(stepErrs);
       return;
     }
     setIsSubmitting(true);
-    const savings = userAccounts.find((a) => a.type === "Savings Account");
-    if (!savings) {
-      setErrors({ general: "No Savings Account available." });
-      setIsSubmitting(false);
-      return;
-    }
+
     try {
-      // simulate API
-      await new Promise((r) => setTimeout(r, 2000));
-      setApprovalStatus("Approved");
-      setIsSubmitted(true);
-      setTimeout(onClose, 3000);
-    } catch {
-      setErrors({ general: "Transfer failed." });
-    } finally {
+      const token = localStorage.getItem("token"); // JWT from login
+      // Use userEmail from props, context, or hardcode for now
+      const email = "jamesphilips0480@gmail.com";
+      const res = await fetch("http://localhost:5000/api/transfer/local", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          recipientAccount: formData.recipientAccount,
+          recipientName: formData.recipientName,
+          recipientBank: formData.recipientBank,
+          recipientRouting: formData.recipientRouting,
+          amount: formData.amount,
+          transferType: formData.transferType,
+          transferDate: formData.transferDate,
+          reference: formData.reference,
+          securityPin: formData.securityPin,
+          email, // <-- send email for verification
+        }),
+      });
+
+      // Debug: log the raw response
+      console.log("Raw response:", res);
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("Failed to parse JSON:", jsonErr);
+        setErrors({ general: "Server returned invalid JSON." });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Debug: log the parsed response
+      console.log("Parsed response data:", data);
+
+      if (!res.ok) {
+        setErrors({ general: data.message || data.error || "Transfer failed." });
+        console.error("Transfer error:", data);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Show verification input
+      setTransferId(data.transferId);
+      setShowVerification(true);
+      setIsSubmitting(false);
+    } catch (err) {
+      setErrors({ general: "Network error: " + err.message });
+      console.error("Network error:", err);
       setIsSubmitting(false);
     }
+  };
+
+  // Handle verification code submission
+  const handleVerify = async () => {
+    setIsSubmitting(true);
+    setVerificationError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/transfer/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transferId, code: verificationCode.trim() }),
+      });
+      const result = await res.json();
+      console.log("Verification response:", result);
+      if (!res.ok) {
+        setVerificationError(result.message || "Verification failed.");
+      } else {
+        setApprovalStatus("Approved");
+        setIsSubmitted(true);
+        setTimeout(onClose, 3000);
+      }
+    } catch (err) {
+      setVerificationError("Network error: " + err.message);
+    }
+    setIsSubmitting(false);
   };
 
   const steps = [
@@ -112,8 +192,33 @@ const LocalTransfer = ({ onClose, userAccounts }) => {
         </div>
       )}
 
+      {/* Verification Step */}
+      {showVerification && !isSubmitted && (
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Verify Transfer</h2>
+          <p className="text-gray-600 mb-4">
+            Enter the verification code sent to your email to approve this transfer.
+          </p>
+          <input
+            type="text"
+            value={verificationCode}
+            onChange={e => setVerificationCode(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="Verification code"
+          />
+          {verificationError && <p className="text-red-500">{verificationError}</p>}
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
+            onClick={handleVerify}
+            disabled={isSubmitting}
+          >
+            Verify & Approve
+          </button>
+        </div>
+      )}
+
       {/* Form */}
-      {!isSubmitting && !isSubmitted && (
+      {!isSubmitting && !isSubmitted && !showVerification && (
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Progress */}
           <div className="relative mb-8">
@@ -194,6 +299,22 @@ const LocalTransfer = ({ onClose, userAccounts }) => {
                   )}
                 </div>
               </div>
+              {/* Bank Name input */}
+              <div>
+                <label className="block mb-2 text-gray-700">Bank Name</label>
+                <input
+                  name="recipientBank"
+                  value={formData.recipientBank}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.recipientBank ? "border-red-500" : "border-gray-200"
+                  } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                  placeholder="e.g. KEB Hana Bank"
+                />
+                {errors.recipientBank && (
+                  <p className="text-red-500 text-sm mt-1">{errors.recipientBank}</p>
+                )}
+              </div>
             </div>
           )}
 
@@ -221,7 +342,7 @@ const LocalTransfer = ({ onClose, userAccounts }) => {
               <div className="bg-red-50 p-4 rounded-lg">
                 <p className="text-sm text-red-800">
                   Available: $
-                  {userAccounts.find((a) => a.type === "Savings Account")?.balance ?? "0.00"}
+                  {userAccounts.find((a) => a.type === "Savings Account")?.balance ?? "53000.00"}
                 </p>
               </div>
             </div>

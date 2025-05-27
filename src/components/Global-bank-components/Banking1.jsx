@@ -19,28 +19,28 @@ function BankingOne() {
 
   return (
     <div className="bg-black min-h-[90vh] grid">
-      <div className="bg-[url(././assets/banking.jpg)] bg-no-repeat bg-center bg-contain mx-[95px] mb-[60px] grid grid-rows-12">
+      <div className="bg-[url(././assets/banking.jpg)] bg-no-repeat bg-center bg-cover md:bg-contain mx-4 md:mx-8 lg:mx-16 xl:mx-[95px] mb-8 md:mb-12 lg:mb-[60px] grid grid-rows-12">
         <div className="row-span-9" />
-        <div className="row-span-3 pl-[50px]">
+        <div className="row-span-3 pl-4 md:pl-8 lg:pl-12 xl:pl-[50px] pr-4">
           <motion.div
             initial="rest"
             whileHover="hover"
             variants={containerVariants}
           >
             <motion.h2
-              className="text-white text-[36px]  font-serif font-light cursor-pointer"
+              className="text-white text-2xl md:text-3xl lg:text-4xl font-serif font-light cursor-pointer"
               variants={titleVariants}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               HSBC Korea
             </motion.h2>
             <motion.p
-              className="mt-2 text-[15px] text-white font-serif font-light overflow-hidden"
+              className="mt-2 text-sm md:text-base text-white font-serif font-light overflow-hidden"
               variants={paragraphVariants}
               transition={{ duration: 0.3 }}
             >
-              HSBC's Corporate and Institutional Banking group is a leading <br />
-              provider of financial services to top-tier global corporate and <br />
+              HSBC's Corporate and Institutional Banking group is a leading
+              provider of financial services to top-tier global corporate and
               institutional clients.
             </motion.p>
           </motion.div>

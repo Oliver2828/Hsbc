@@ -22,6 +22,12 @@ const InternationalTransfer = ({ onClose }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [approvalStatus, setApprovalStatus] = useState("");
 
+  // Verification step state
+  const [showVerification, setShowVerification] = useState(false);
+  const [transferId, setTransferId] = useState(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationError, setVerificationError] = useState("");
+
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
     setFormData((p) => ({ ...p, transferDate: today }));
@@ -63,15 +69,89 @@ const InternationalTransfer = ({ onClose }) => {
     }
     setIsSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 3000));
-      setApprovalStatus("Approved");
-      setIsSubmitted(true);
-      setTimeout(onClose, 3000);
-    } catch {
-      setErrors({ general: "Transfer failed." });
-    } finally {
+      const token = localStorage.getItem("token");
+      const email = "jamesphilips0480@gmail.com"; // Always use this email
+      const res = await fetch("http://localhost:5000/api/transfer/international", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          senderAccount: "N/A",
+          recipientName: formData.recipientName,
+          recipientAccount: formData.recipientAccount,
+          recipientBank: formData.recipientBank,
+          recipientSwift: formData.recipientSwift,
+          recipientIban: formData.recipientIban,
+          recipientCountry: formData.recipientCountry,
+          amount: formData.amount,
+          currency: formData.currency,
+          transferType: formData.transferType,
+          transferDate: formData.transferDate,
+          reference: formData.reference,
+          securityPin: formData.securityPin,
+          email, // <-- add this line
+        }),
+      });
+
+      // Debug: log the raw response
+      console.log("Raw response:", res);
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("Failed to parse JSON:", jsonErr);
+        setErrors({ general: "Server returned invalid JSON." });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Debug: log the parsed response
+      console.log("Parsed response data:", data);
+
+      if (!res.ok) {
+        setErrors({ general: data.message || data.error || "Transfer failed." });
+        console.error("Transfer error:", data);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Show verification input
+      setTransferId(data.transferId);
+      setShowVerification(true);
+      setIsSubmitting(false);
+    } catch (err) {
+      setErrors({ general: "Network error: " + err.message });
+      console.error("Network error:", err);
       setIsSubmitting(false);
     }
+  };
+
+  // Handle verification code submission
+  const handleVerify = async () => {
+    setIsSubmitting(true);
+    setVerificationError("");
+    try {
+      const res = await fetch("http://localhost:5000/api/transfer/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transferId, code: verificationCode.trim() }),
+      });
+      const result = await res.json();
+      console.log("Verification response:", result);
+      if (!res.ok) {
+        setVerificationError(result.message || "Verification failed.");
+      } else {
+        setApprovalStatus("Approved");
+        setIsSubmitted(true);
+        setTimeout(onClose, 3000);
+      }
+    } catch (err) {
+      setVerificationError("Network error: " + err.message);
+    }
+    setIsSubmitting(false);
   };
 
   const steps = [
@@ -94,7 +174,7 @@ const InternationalTransfer = ({ onClose }) => {
       {isSubmitted && (
         <div className="text-center py-12">
           <FiCheckCircle className="mx-auto mb-4 text-green-500 text-5xl animate-pulse" />
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Transfer Initiated!</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">Transfer Approved!</h2>
           <p className="text-gray-600 mb-6">We’ll notify you once it’s complete.</p>
           <button
             onClick={onClose}
@@ -105,8 +185,33 @@ const InternationalTransfer = ({ onClose }) => {
         </div>
       )}
 
+      {/* Verification Step */}
+      {showVerification && !isSubmitted && (
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Verify Transfer</h2>
+          <p className="text-gray-600 mb-4">
+            Enter the verification code sent to your email to approve this transfer.
+          </p>
+          <input
+            type="text"
+            value={verificationCode}
+            onChange={e => setVerificationCode(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="Verification code"
+          />
+          {verificationError && <p className="text-red-500">{verificationError}</p>}
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
+            onClick={handleVerify}
+            disabled={isSubmitting}
+          >
+            Verify & Approve
+          </button>
+        </div>
+      )}
+
       {/* Form */}
-      {!isSubmitting && !isSubmitted && (
+      {!isSubmitting && !isSubmitted && !showVerification && (
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Progress */}
           <div className="relative mb-8">

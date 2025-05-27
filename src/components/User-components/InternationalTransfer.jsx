@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import Modal from "../Modal/Modal";
 import InternationalTransferForm from "../Forms/InternationTransfer";
-import { FiGlobe, FiShield, FiClock, FiAlertTriangle, FiArrowRight } from "react-icons/fi";
+import {
+  FiGlobe,
+  FiShield,
+  FiClock,
+  FiAlertTriangle,
+  FiArrowRight,
+} from "react-icons/fi";
 
 const InternationalTransfer = ({ userAccounts, loading, error }) => {
   const [showTransferForm, setShowTransferForm] = useState(false);
@@ -25,16 +31,16 @@ const InternationalTransfer = ({ userAccounts, loading, error }) => {
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">
       <header className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-red-700 mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-700 mb-4">
           Global Money Transfers
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
           Send money worldwide instantly with competitive exchange rates and low fees
         </p>
       </header>
 
       <div className="bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-2xl shadow-lg mb-8">
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-8">
           <div className="bg-white p-6 rounded-xl border border-gray-100">
             <FiGlobe className="text-3xl text-red-600 mb-4" />
             <h3 className="text-lg font-semibold mb-2">150+ Countries</h3>
@@ -55,11 +61,16 @@ const InternationalTransfer = ({ userAccounts, loading, error }) => {
         <div className="bg-white p-6 rounded-xl border border-gray-100 mb-8">
           <h4 className="font-medium text-red-700 mb-4">Supported Currencies</h4>
           <div className="flex flex-wrap gap-3">
-            {['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CNY', 'INR'].map(currency => (
-              <span key={currency} className="px-3 py-1 bg-gray-50 rounded-full text-sm">
-                {currency}
-              </span>
-            ))}
+            {["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CNY", "INR"].map(
+              (currency) => (
+                <span
+                  key={currency}
+                  className="px-3 py-1 bg-gray-50 rounded-full text-sm"
+                >
+                  {currency}
+                </span>
+              )
+            )}
           </div>
         </div>
 
@@ -68,14 +79,15 @@ const InternationalTransfer = ({ userAccounts, loading, error }) => {
           <div>
             <h4 className="font-medium text-red-700 mb-2">Important Notice</h4>
             <p className="text-sm text-red-700">
-              Ensure recipient details include full name, IBAN/SWIFT codes, and bank address. 
-              Incorrect information may result in transfer delays or additional fees.
+              Ensure recipient details include full name, IBAN/SWIFT codes, and
+              bank address. Incorrect information may result in transfer delays or
+              additional fees.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="text-center my-12">
+      <div className="text-center my-8 sm:my-12">
         <button
           onClick={() => setShowTransferForm(true)}
           className="bg-red-600 hover:bg-red-700 text-white px-12 py-4 rounded-xl
@@ -88,13 +100,21 @@ const InternationalTransfer = ({ userAccounts, loading, error }) => {
       </div>
 
       <div className="bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-semibold text-red-700 mb-8">Process Overview</h2>
-        <div className="grid md:grid-cols-4 gap-6">
+        <h2 className="text-2xl font-semibold text-red-700 mb-8">
+          Process Overview
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {[
-            { title: "Select Country", desc: "Choose recipient's country and bank" },
+            {
+              title: "Select Country",
+              desc: "Choose recipient's country and bank",
+            },
             { title: "Enter Details", desc: "IBAN/SWIFT codes and amount" },
-            { title: "Review Fees", desc: "See exchange rate & transfer fees" },
-            { title: "Confirm & Send", desc: "Authorize with 2FA security" }
+            {
+              title: "Review Fees",
+              desc: "See exchange rate & transfer fees",
+            },
+            { title: "Confirm & Send", desc: "Authorize with 2FA security" },
           ].map((step, index) => (
             <div key={step.title} className="text-center">
               <div className="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
@@ -108,8 +128,10 @@ const InternationalTransfer = ({ userAccounts, loading, error }) => {
       </div>
 
       <div className="mt-8 bg-red-50 p-6 rounded-xl">
-        <h3 className="text-lg font-semibold text-red-700 mb-4">Fees & Limits</h3>
-        <div className="grid md:grid-cols-2 gap-6">
+        <h3 className="text-lg font-semibold text-red-700 mb-4">
+          Fees & Limits
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Transfer Fee</span>

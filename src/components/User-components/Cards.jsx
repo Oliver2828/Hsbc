@@ -1,13 +1,14 @@
+// (No changes to import statements)
 import React, { useState, useEffect } from "react";
 import Modal from "../Modal/Modal";
 import CreditCard from "../User-components/CreditCards";
-import { 
-  FaCreditCard, 
-  FaMoneyCheckAlt, 
-  FaCcVisa, 
-  FaCcMastercard, 
-  FaCcDiscover, 
-  FaCcAmex, 
+import {
+  FaCreditCard,
+  FaMoneyCheckAlt,
+  FaCcVisa,
+  FaCcMastercard,
+  FaCcDiscover,
+  FaCcAmex,
   FaCcDinersClub,
   FaSpinner,
   FaTimes,
@@ -72,9 +73,9 @@ export default function Cards() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-gradient-to-r from-red-600 to-red-500 rounded-2xl p-8 text-white shadow-xl mb-8">
-        <h2 className="text-4xl font-bold text-center mb-4">Card Management</h2>
-        <p className="text-center text-red-100 max-w-2xl mx-auto">
+      <div className="bg-gradient-to-r from-red-600 to-red-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl mb-8">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">Card Management</h2>
+        <p className="text-center text-red-100 max-w-2xl mx-auto text-sm sm:text-base">
           Securely manage your payment cards, apply for new ones, and monitor your financial tools
           with our intuitive card management system.
         </p>
@@ -112,14 +113,14 @@ export default function Cards() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all"
+          className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-semibold text-base sm:text-lg shadow-lg transition-all w-full sm:w-auto"
           onClick={handleApplyForCard}
         >
           Apply New Card
         </motion.button>
 
         <button
-          className="text-red-500 hover:text-red-600 font-medium flex items-center gap-2"
+          className="text-red-500 hover:text-red-600 font-medium flex items-center gap-2 text-sm"
           onClick={() => {
             localStorage.removeItem("cards");
             window.location.reload();
@@ -133,7 +134,7 @@ export default function Cards() {
       <AnimatePresence>
         {showModal && (
           <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="New Card Application">
-            <div className="space-y-6">
+            <div className="space-y-6 px-2 sm:px-0">
               {isProcessing ? (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -141,7 +142,7 @@ export default function Cards() {
                   className="flex flex-col items-center justify-center p-6 space-y-4"
                 >
                   <FaSpinner className="w-12 h-12 text-red-600 animate-spin" />
-                  <p className="text-gray-600 text-center">
+                  <p className="text-gray-600 text-center text-sm sm:text-base">
                     Securely processing your application...
                   </p>
                 </motion.div>
@@ -151,24 +152,23 @@ export default function Cards() {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-6"
                 >
-                  <h5 className="text-xl text-center font-semibold text-gray-700">
+                  <h5 className="text-lg sm:text-xl text-center font-semibold text-gray-700">
                     Select Card Type
                   </h5>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                      { type: "Debit", Icon: FaCreditCard },
-                      { type: "Credit", Icon: FaMoneyCheckAlt },
-                    ].map(({ type, Icon }) => (
-                      <motion.button
-                        key={type}
-                        whileHover={{ scale: 1.02 }}
-                        className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg border-2 border-red-100 transition-all"
-                        onClick={() => setSelectedCardType(type)}
-                      >
-                        <Icon className="w-12 h-12 mb-4 text-red-600" />
-                        <span className="text-lg font-medium text-gray-700">{type} Card</span>
-                      </motion.button>
-                    ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[{ type: "Debit", Icon: FaCreditCard }, { type: "Credit", Icon: FaMoneyCheckAlt }].map(
+                      ({ type, Icon }) => (
+                        <motion.button
+                          key={type}
+                          whileHover={{ scale: 1.02 }}
+                          className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg border-2 border-red-100 transition-all"
+                          onClick={() => setSelectedCardType(type)}
+                        >
+                          <Icon className="w-10 h-10 mb-3 text-red-600" />
+                          <span className="text-base font-medium text-gray-700">{type} Card</span>
+                        </motion.button>
+                      )
+                    )}
                   </div>
                 </motion.div>
               ) : !selectedCardBrand ? (
@@ -177,10 +177,10 @@ export default function Cards() {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-6"
                 >
-                  <h5 className="text-xl text-center font-semibold text-gray-700">
+                  <h5 className="text-lg sm:text-xl text-center font-semibold text-gray-700">
                     Choose Card Brand
                   </h5>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {cardBrands.map(({ brand, Icon, color }) => (
                       <motion.button
                         key={brand}
@@ -188,7 +188,7 @@ export default function Cards() {
                         className={`flex flex-col items-center justify-center p-4 bg-gradient-to-br ${color} text-white rounded-xl shadow-md hover:shadow-lg transition-all`}
                         onClick={() => handleCardSelection(selectedCardType, brand)}
                       >
-                        <Icon className="w-8 h-8 mb-2" />
+                        <Icon className="w-7 h-7 mb-2" />
                         <span className="text-sm font-medium">{brand}</span>
                       </motion.button>
                     ))}
@@ -203,7 +203,7 @@ export default function Cards() {
                   className="bg-red-50 p-4 rounded-lg flex items-center gap-3"
                 >
                   <FaExclamationTriangle className="w-5 h-5 text-red-600" />
-                  <p className="text-red-600">{errorMessage}</p>
+                  <p className="text-red-600 text-sm">{errorMessage}</p>
                 </motion.div>
               )}
             </div>

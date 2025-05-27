@@ -77,30 +77,30 @@ const Dashboard = () => {
   //   fetchUserData();
 
     // Mocked user data
-    setUsername("Alyssa Alluraye");
+    setUsername("James Philips");
     setAccounts([
       { number: "456*******", type: "Savings", balance: 45500.75 },
       { number: "987*******", type: "Checking", balance: 7500.0 },
       // { number: "9876543234", type: "Investment", balance: 7200.5 },
     ]);
     const mockTx = [
-      {
-        id: 1,
-        recipientName: "Jane Smith",
-        recipientBank: "Chase",
-        currency: "USD",
-        amount: 300.0,
-        date: "2025-05-01",
-      },
-      {
-        id: 2,
-        recipientName: "Amazon",
-        recipientBank: "PayPal",
-        currency: "USD",
-        amount: 120.99,
-        date: "2025-05-02",
-      },
-    ];
+  {
+    id: 1,
+    recipientName: "Jane Smith",
+    recipientBank: "Chase",
+    currency: "USD",
+    amount: 300.0,
+    transferDate: "2025-05-01", // <-- change here
+  },
+  {
+    id: 2,
+    recipientName: "Amazon",
+    recipientBank: "PayPal",
+    currency: "USD",
+    amount: 120.99,
+    transferDate: "2025-05-02", // <-- change here
+  },
+];
     setTransactions(mockTx);
     setFilteredTransactions(mockTx);
   }, []);
@@ -212,7 +212,7 @@ const Dashboard = () => {
         </div>
         <button
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center shrink-0"
-          onClick={() => navigate("/user/profile")}
+          onClick={() => navigate("")}
         >
           <FaUserCircle className="text-xl sm:text-2xl" />
         </button>

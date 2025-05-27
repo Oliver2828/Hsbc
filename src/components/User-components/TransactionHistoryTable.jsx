@@ -29,8 +29,13 @@ const TransactionHistoryTable = ({
           {transactions.map((transaction) => (
             <tr key={transaction._id} className="hover:bg-gray-50 even:bg-gray-50">
               <td className="px-4 py-3">
-                {new Date(transaction.transferDate).toLocaleDateString()}
-              </td>
+                  {transaction.transferDate
+                    ? (() => {
+                        const d = new Date(transaction.transferDate);
+                        return isNaN(d) ? "N/A" : d.toLocaleDateString();
+                      })()
+                    : "N/A"}
+                </td>
               <td className="px-4 py-3">{transaction.recipientName}</td>
               <td className="px-4 py-3">{transaction.recipientBank || "N/A"}</td>
               <td className="px-4 py-3">

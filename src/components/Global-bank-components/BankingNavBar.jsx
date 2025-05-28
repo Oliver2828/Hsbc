@@ -7,7 +7,7 @@ function BankingNavBar() {
   const [showPopup, setShowPopup] = useState(false);
   const [pendingRoute, setPendingRoute] = useState(null);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedLanguage, setSelectedLanguage] = useState('Korean');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 function KoreaNavBar() {
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedLanguage, setSelectedLanguage] = useState('Korean');
 
   const languages = [
     { code: 'en',    name: 'English'    },

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 function HomeNavBar() {
   const [showLangOptions, setShowLangOptions] = useState(false)
-  const [selectedLang, setSelectedLang] = useState('English')
+  const [selectedLang, setSelectedLang] = useState('Korean')
   const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
 

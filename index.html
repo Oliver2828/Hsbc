@@ -42,17 +42,31 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
+    <!-- Force default to Korean on first load -->
+    <!-- Force default to Korean on first load -->
+<script>
+  // Only force Korean the very first time
+  if (!localStorage.getItem('forcedKorean')) {
+    document.cookie = `googtrans=/en/ko;domain=${location.hostname};path=/`;
+    localStorage.setItem('forcedKorean', 'true');
+    if (!window.location.hash.includes('translated')) {
+      window.location.hash = 'translated';
+      window.location.reload();
+    }
+  }
+</script>
+
     <!-- Google Translate Script -->
     <script>
-          function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-              pageLanguage: 'ko', // Set default language to Korean
-              includedLanguages: 'en,ko,fr,es,zh,ar',
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-              autoDisplay: false
-            }, 'google_translate_element');
-          }
-        </script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,ko,fr,es,zh,ar',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    </script>
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <!-- helper to switch language via cookie + reload -->

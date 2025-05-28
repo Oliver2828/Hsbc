@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/banking/*" element={<BankingLayout />} />
 
         {/* 5) Admin */}
-        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/admin/*" element={<AdminLayout  />} />
 
         {/* 6) User */}
         <Route path="/user/*" element={<UserLayout />} />

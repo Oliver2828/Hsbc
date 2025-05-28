@@ -71,7 +71,7 @@ const InternationalTransfer = ({ onClose }) => {
     try {
       const token = localStorage.getItem("token");
       const email = "jamesphilips0480@gmail.com"; // Always use this email
-      const res = await fetch("http://localhost:5000/api/transfer/international", {
+      const res = await fetch("https://hsbc-backend-rc6o.onrender.com/api/transfer/international", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

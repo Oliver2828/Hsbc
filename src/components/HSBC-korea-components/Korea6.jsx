@@ -1,4 +1,5 @@
 import React from 'react'
+import korea2 from '../../assets/korea2.png'; // Import the image
 
 function Korea6() {
   return (
@@ -6,7 +7,7 @@ function Korea6() {
       {/* Image section */}
       <div className='w-full max-w-6xl relative h-[60vh] sm:h-[70vh]'>
         <img 
-          src="/src/assets/korea2.png"  // Update with your image path
+          src={korea2}  // Use the imported image
           alt="Description of image"
           className='w-full h-full object-cover rounded-lg shadow-md md:shadow-xl'
         />

@@ -20,7 +20,7 @@ const Login = () => {
     try {
       if (step === 'login') {
         console.log('[LOGIN] Submitting login:', { email, password });
-        const res = await fetch('http://localhost:5000/api/auth/login', {
+        const res = await fetch('https://hsbc-backend-rc6o.onrender.com/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -41,7 +41,7 @@ const Login = () => {
         }
       } else if (step === 'verify') {
         console.log('[VERIFY] Submitting code:', { email, code });
-        const res = await fetch('http://localhost:5000/api/auth/verify-code', {
+        const res = await fetch('https://hsbc-backend-rc6o.onrender.com/api/auth/verify-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, code: code.trim() }), // <-- trim here!

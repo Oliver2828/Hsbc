@@ -11,6 +11,7 @@ import MarketLayout  from './layouts/Global Market/MarketLayout'
 import BankingLayout from './layouts/Global Banking/BankingLayout'
 import AdminLayout   from './layouts/Admin/AdminLayout'
 import UserLayout    from './layouts/User/UserLayout'
+import RequireAuth from './components/Auth/RequireAuth'; // Add this import
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -32,7 +33,14 @@ createRoot(document.getElementById('root')).render(
         <Route path="/admin/*" element={<AdminLayout />} />
 
         {/* 6) User */}
-        <Route path="/user/*" element={<UserLayout />} />
+       <Route
+          path="/user/*"
+          element={
+            <RequireAuth>
+              <UserLayout />
+            </RequireAuth>
+          }
+        />
 
         {/* 7) Unknown path → Home */}
         <Route path="*" element={<Navigate to="/" replace />} />

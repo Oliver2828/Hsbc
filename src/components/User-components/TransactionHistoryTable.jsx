@@ -1,18 +1,61 @@
 import React from "react";
 
+const defaultTransactions = [
+  {
+    _id: "1",
+    transferDate: "2025-04-30T00:00:00Z",
+    recipientName: "Daily Business Income",
+    recipientBank: "Credit",
+    amount: -3000,
+    currency: "USD",
+    status: "Approved",
+  },
+  {
+    _id: "2",
+    transferDate: "2025-04-30T00:00:00Z",
+    recipientName: "Bank Charges",
+    recipientBank: "Charge",
+    amount: 5,
+    currency: "USD",
+    status: "Approved",
+  },
+  {
+    _id: "3",
+    transferDate: "2025-05-01T00:00:00Z",
+    recipientName: "Daily Business Income",
+    recipientBank: "Credit",
+    amount: -3000,
+    currency: "USD",
+    status: "Approved",
+  },
+];
+
 const TransactionHistoryTable = ({
-  transactions = [], // Default to an empty array if transactions is undefined
+  transactions = defaultTransactions,
   totalTransactions,
-  limit,
-  currentPage,
-  onPageChange,
-  showPagination = true,
+  limit = 10,
+  currentPage = 1,
+  onPageChange = () => {},
+  showPagination = false,
 }) => {
-  console.log("Transactions received in TransactionHistoryTable:", transactions);
+  // Filter only Daily Business Income and Bank Charges
+  const filteredTransactions = transactions.filter(
+    (t) =>
+      t.recipientName === "Daily Business Income" ||
+      t.recipientName === "Bank Charges"
+  );
 
-  const totalPages = Math.ceil(totalTransactions / limit);
+  // Pagination calculations
+  const totalPages = Math.ceil(
+    (totalTransactions || filteredTransactions.length) / limit
+  );
+  const startIndex = (currentPage - 1) * limit;
+  const paginatedTransactions = filteredTransactions.slice(
+    startIndex,
+    startIndex + limit
+  );
 
-    return (
+  return (
     <div className="overflow-x-auto rounded-lg border border-gray-200">
       <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
         <thead className="bg-gray-50">
@@ -26,41 +69,65 @@ const TransactionHistoryTable = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 border-t border-gray-200">
-          {transactions.map((transaction) => (
-            <tr key={transaction._id} className="hover:bg-gray-50 even:bg-gray-50">
-              <td className="px-4 py-3">
+          {paginatedTransactions.length > 0 ? (
+            paginatedTransactions.map((transaction) => (
+              <tr
+                key={transaction._id}
+                className="hover:bg-gray-50 even:bg-gray-50"
+              >
+                <td className="px-4 py-3">
                   {transaction.transferDate
                     ? (() => {
                         const d = new Date(transaction.transferDate);
-                        return isNaN(d) ? "N/A" : d.toLocaleDateString();
+                        return isNaN(d)
+                          ? "N/A"
+                          : d.toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            });
                       })()
                     : "N/A"}
                 </td>
-              <td className="px-4 py-3">{transaction.recipientName}</td>
-              <td className="px-4 py-3">{transaction.recipientBank || "N/A"}</td>
-              <td className="px-4 py-3">
-                <span className={`font-medium ${transaction.amount >= 0 ? "text-red-600" : "text-green-600"}`}>
-                  {transaction.amount >= 0 ? "-" : "+"}
-                  {(Math.abs(transaction.amount) || 0).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: transaction.currency || "USD",
-                  })}
-                </span>
-              </td>
-              <td className="px-4 py-3">{transaction.currency || "USD"}</td>
-              <td className="px-4 py-3">
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    transaction.status === "Approved"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {transaction.status}
-                </span>
+                <td className="px-4 py-3">{transaction.recipientName}</td>
+                <td className="px-4 py-3">{transaction.recipientBank || "N/A"}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`font-medium ${
+                      transaction.amount >= 0 ? "text-red-600" : "text-green-600"
+                    }`}
+                  >
+                    {transaction.amount >= 0 ? "-" : "+"}
+                    {(Math.abs(transaction.amount) || 0).toLocaleString("en-US", {
+                      style: "currency",
+                      currency: transaction.currency || "USD",
+                    })}
+                  </span>
+                </td>
+                <td className="px-4 py-3">{transaction.currency || "USD"}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      transaction.status === "Approved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {transaction.status}
+                  </span>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="6"
+                className="text-center py-4 text-gray-400"
+              >
+                No Daily Business Income or Charges found.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

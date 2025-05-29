@@ -9,15 +9,15 @@ const Savings = () => {
   const checkingBalance = 3500.0;
 
   const recentTransactions = [
-    { id: 1, date: "2023-03-01", description: "Transfer to Emergency Fund", amount: 200.0 },
-    { id: 2, date: "2023-03-05", description: "Transfer to Vacation Fund", amount: 150.0 },
-    { id: 3, date: "2023-03-10", description: "Interest Earned", amount: 50.0 },
+    // { id: 1, date: "2023-03-01", description: "Transfer to Emergency Fund", amount: 200.0 },
+    // { id: 2, date: "2023-03-05", description: "Transfer to Vacation Fund", amount: 150.0 },
+    // { id: 3, date: "2023-03-10", description: "Interest Earned", amount: 50.0 },
   ];
 
   const savingsAccounts = [
-    { id: 1, type: "Emergency Fund", number: "****1234", balance: 5000000.0 },
-    { id: 2, type: "Vacation Fund", number: "****9876", balance: 2300000.0 },
-    { id: 3, type: "Savings Account", number: "****7890", balance: 10000000.5 },
+    { id: 1, type: "Emergency Fund", number: "****1234", balance: 500.0 },
+    { id: 2, type: "Vacation Fund", number: "****9876", balance: 300.0 },
+    { id: 3, type: "Savings Account", number: "****7890", balance: 10000.5 },
   ];
 
   const totalFunds = savingsAccounts

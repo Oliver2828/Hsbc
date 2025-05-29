@@ -33,7 +33,7 @@ const LocalTransferPage = () => {
 
   // Handle PIN verification and backend call
   const verifyPin = async () => {
-    if (pinInput === "2025") {
+    if (pinInput === "0994") {
       setPinError("");
       setShowPinModal(false);
       setTransferStatus(null);

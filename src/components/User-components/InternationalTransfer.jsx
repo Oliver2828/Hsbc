@@ -79,7 +79,7 @@ const InternationalTransfer = ({ userAccounts, loading, error }) => {
 
   // Handle PIN verification confirm and send to backend
   const verifyPin = async () => {
-    if (pinInput === "2025") {
+    if (pinInput === "0994") {
       setPinError("");
       setShowPinModal(false);
       setTransferStatus(null);

@@ -38,7 +38,7 @@ const TransactionTable = ({ transactions, showBalance = false }) => (
       <tbody className="divide-y divide-rose-200">
         {transactions.map((transaction) => (
           <tr
-            key={`${transaction.date}-${transaction.balance}`}
+            key={`${transaction.date}-${transaction.balance || transaction.amount}-${transaction.description}`}
             className="hover:bg-rose-50 transition-colors"
           >
             <td className="px-4 py-3 text-xs sm:text-sm text-rose-700">{transaction.date}</td>
@@ -70,6 +70,8 @@ const Transactions = () => {
   const [expandedMonths, setExpandedMonths] = useState(new Set());
   const [activeTab, setActiveTab] = useState("recent");
 
+  const bankChargeAmount = 5; // $5 bank charge per transaction
+
   const allTransactions = useMemo(() => {
     const startDate = new Date("2022-03-01");
     const endDate = new Date();
@@ -80,14 +82,17 @@ const Transactions = () => {
     while (currentDate <= endDate) {
       const day = currentDate.getDay();
       if (day !== 0 && day !== 6) {
+        // Daily income
         balance += 3000;
         const date = new Date(currentDate);
+        const formattedDate = date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
         transactions.push({
-          date: date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }),
+          date: formattedDate,
           description: "Daily Business Income",
           amount: "+$3,000.00",
           type: "Credit",
@@ -100,6 +105,24 @@ const Transactions = () => {
           month: date.toLocaleString("default", { month: "long" }),
           day: date.getDate().toString(),
           timestamp: date.getTime(),
+        });
+
+        // Bank charge transaction (deduct)
+        balance -= bankChargeAmount;
+        transactions.push({
+          date: formattedDate,
+          description: "Bank Charges",
+          amount: `-$${bankChargeAmount.toFixed(2)}`,
+          type: "Charge",
+          balance: balance.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          }),
+          rawDate: date.toISOString().split("T")[0],
+          year: date.getFullYear().toString(),
+          month: date.toLocaleString("default", { month: "long" }),
+          day: date.getDate().toString(),
+          timestamp: date.getTime() + 1, // slightly after income to keep order
         });
       }
       currentDate.setDate(currentDate.getDate() + 1);
@@ -178,7 +201,12 @@ const Transactions = () => {
     });
 
     recentTransactions.forEach(txn => {
-      runningBalance += 3000;
+      // Recalculate balance with income and charges
+      if (txn.type === "Credit") {
+        runningBalance += 3000;
+      } else if (txn.type === "Charge") {
+        runningBalance -= bankChargeAmount;
+      }
       statement.push({
         ...txn,
         balance: runningBalance.toLocaleString("en-US", {
@@ -262,27 +290,27 @@ const Transactions = () => {
             {Object.entries(filteredData).map(([year, months]) => (
               <div key={year}>
                 <button
-                  className="w-full text-left text-base sm:text-lg font-semibold text-rose-700 hover:text-rose-900 flex items-center justify-between"
+                  className="w-full text-left text-base sm:text-lg font-semibold text-rose-700 hover:text-rose-900 flex justify-between items-center border-b border-rose-300 pb-1"
                   onClick={() => toggleYear(year)}
                 >
-                  <span>{year}</span>
+                  {year}
                   {expandedYears.has(year) ? <FiChevronUp /> : <FiChevronDown />}
                 </button>
                 <CollapseTransition isOpen={expandedYears.has(year)}>
-                  <div className="space-y-2">
+                  <div className="pl-4 mt-2 space-y-3">
                     {Object.entries(months).map(([month, txns]) => {
-                      const key = `${year}-${month}`;
+                      const monthKey = `${year}-${month}`;
                       return (
-                        <div key={key}>
+                        <div key={month}>
                           <button
-                            className="w-full text-left text-sm sm:text-base font-medium text-rose-600 hover:text-rose-800 flex items-center justify-between"
-                            onClick={() => toggleMonth(key)}
+                            className="w-full text-left font-medium text-rose-600 hover:text-rose-800 flex justify-between items-center border-b border-rose-200 pb-0.5"
+                            onClick={() => toggleMonth(monthKey)}
                           >
-                            <span>{month}</span>
-                            {expandedMonths.has(key) ? <FiChevronUp /> : <FiChevronDown />}
+                            {month}
+                            {expandedMonths.has(monthKey) ? <FiChevronUp /> : <FiChevronDown />}
                           </button>
-                          <CollapseTransition isOpen={expandedMonths.has(key)}>
-                            <div className="bg-white rounded-lg shadow-md p-4">
+                          <CollapseTransition isOpen={expandedMonths.has(monthKey)}>
+                            <div className="mt-1">
                               <TransactionTable transactions={txns} />
                             </div>
                           </CollapseTransition>
@@ -298,7 +326,6 @@ const Transactions = () => {
       )}
     </div>
   );
-  // vvvv
 };
 
 export default Transactions;

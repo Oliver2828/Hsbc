@@ -13,6 +13,61 @@ const LocalTransferPage = () => {
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [userAccounts] = useState([]);
 
+  // New states for PIN, transfer, and status
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [transferData, setTransferData] = useState(null);
+  const [transferStatus, setTransferStatus] = useState(null);
+  const [backendError, setBackendError] = useState("");
+
+  // Called when transfer form submits
+  const handleTransferSubmit = (data) => {
+    setTransferData(data);
+    setShowTransferForm(false);
+    setShowPinModal(true);
+    setPinInput("");
+    setPinError("");
+    setBackendError("");
+  };
+
+  // Handle PIN verification and backend call
+  const verifyPin = async () => {
+    if (pinInput === "2025") {
+      setPinError("");
+      setShowPinModal(false);
+      setTransferStatus(null);
+      setBackendError("");
+      // Send to backend
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "https://hsbc-backend-rc6o.onrender.com/api/transfer/local",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(transferData),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setTransferStatus("pending");
+        } else {
+          setTransferStatus("failed");
+          setBackendError(data.message || "Transfer failed.");
+        }
+      } catch (err) {
+        setTransferStatus("failed");
+        setBackendError("Network error. Please try again.");
+      }
+    } else {
+      setPinError("Incorrect PIN. Please try again.");
+    }
+  };
+
   return (
     <div className="container max-w-4xl mx-auto px-4 sm:px-6 py-6">
       {/* Header */}
@@ -107,7 +162,7 @@ const LocalTransferPage = () => {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal for transfer form */}
       <Modal
         isOpen={showTransferForm}
         onClose={() => setShowTransferForm(false)}
@@ -116,8 +171,52 @@ const LocalTransferPage = () => {
         <LocalTransferForm
           userAccounts={userAccounts}
           onClose={() => setShowTransferForm(false)}
+          onSubmit={handleTransferSubmit}
         />
       </Modal>
+
+      {/* PIN verification modal */}
+      <Modal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        title="PIN Verification"
+        size="sm"
+      >
+        <div className="flex flex-col items-center gap-4">
+          <p>Enter your 4-digit security PIN:</p>
+          <input
+            type="password"
+            maxLength={4}
+            className="border border-gray-300 rounded p-2 w-full text-center text-xl tracking-widest"
+            value={pinInput}
+            onChange={(e) => setPinInput(e.target.value)}
+          />
+          {pinError && <p className="text-red-600 text-sm">{pinError}</p>}
+          <button
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded mt-2"
+            onClick={verifyPin}
+          >
+            Confirm PIN
+          </button>
+        </div>
+      </Modal>
+
+      {/* Show transfer status if set */}
+      {transferStatus && (
+        <div className="mt-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center font-semibold">
+          Transfer status: <span className="uppercase">{transferStatus}</span>
+          {transferStatus === "pending" && (
+            <span className="block text-sm font-normal mt-1">
+              Your transfer is pending approval. You will be notified once it is processed.
+            </span>
+          )}
+          {transferStatus === "failed" && backendError && (
+            <span className="block text-sm font-normal mt-1 text-red-600">
+              {backendError}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -19,47 +19,35 @@ const Login = () => {
     setMessage('');
     try {
       if (step === 'login') {
-        console.log('[LOGIN] Submitting login:', { email, password });
         const res = await fetch('https://hsbc-backend-rc6o.onrender.com/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         });
         const data = await res.json();
-        console.log('[LOGIN] Response:', res);
-        console.log('[LOGIN] Response data:', data);
         if (!res.ok) {
           setError(data.message || 'Login failed');
-          console.error('[LOGIN] Error:', data.message || 'Login failed');
         } else if (data.step === 'verify') {
           setStep('verify');
           setMessage(data.message);
-          console.log('[LOGIN] Verification step triggered. Message:', data.message);
         } else {
           setError('Unexpected response from server.');
-          console.error('[LOGIN] Unexpected response:', data);
         }
       } else if (step === 'verify') {
-        console.log('[VERIFY] Submitting code:', { email, code });
         const res = await fetch('https://hsbc-backend-rc6o.onrender.com/api/auth/verify-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code: code.trim() }), // <-- trim here!
+          body: JSON.stringify({ email, code: code.trim() }),
         });
         const data = await res.json();
-        console.log('[VERIFY] Response:', res);
-        console.log('[VERIFY] Response data:', data);
         if (!res.ok) {
           setError(data.message || 'Verification failed');
-          console.error('[VERIFY] Error:', data.message || 'Verification failed');
         } else {
           setMessage(data.message);
           if (data.token) {
             localStorage.setItem('token', data.token);
-            console.log('[VERIFY] JWT token saved to localStorage:', data.token);
           }
           localStorage.setItem('isLoggedIn', 'true');
-          console.log('[VERIFY] Login successful, navigating to /user');
           setTimeout(() => {
             navigate('/user');
           }, 1000);
@@ -67,7 +55,6 @@ const Login = () => {
       }
     } catch (err) {
       setError('Network error: ' + err.message);
-      console.error('[LOGIN/VERIFY] Network error:', err);
     }
     setLoading(false);
   };

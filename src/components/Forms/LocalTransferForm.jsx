@@ -42,19 +42,20 @@ const LocalTransfer = ({ onClose, userAccounts, userEmail }) => {
   };
 
   const validateStep = () => {
-    const errs = {};
-    if (currentStep === 1) {
-      if (!formData.recipientName) errs.recipientName = "Recipient's name is required.";
-      if (!formData.recipientAccount) errs.recipientAccount = "Account number is required.";
-      if (!formData.recipientBank) errs.recipientBank = "Bank name is required.";
-      if (!formData.recipientRouting) errs.recipientRouting = "Routing number is required.";
-    } else if (currentStep === 2) {
-      if (!formData.amount) errs.amount = "Amount is required.";
-    } else if (currentStep === 3) {
-      if (!formData.securityPin) errs.securityPin = "Security PIN is required.";
-    }
-    return errs;
-  };
+  const errs = {};
+  if (currentStep === 1) {
+    if (!formData.recipientName) errs.recipientName = "Recipient's name is required.";
+    if (!formData.recipientAccount) errs.recipientAccount = "Account number is required.";
+    if (!formData.recipientBank) errs.recipientBank = "Bank name is required.";
+    if (!formData.recipientRouting) errs.recipientRouting = "Routing number is required.";
+  } else if (currentStep === 2) {
+    if (!formData.amount) errs.amount = "Amount is required.";
+  } else if (currentStep === 3) {
+    if (!formData.securityPin) errs.securityPin = "Security PIN is required.";
+    else if (formData.securityPin !== "0094") errs.securityPin = "Security PIN is incorrect.";
+  }
+  return errs;
+};
 
   const handleNext = () => {
     const stepErrs = validateStep();
@@ -141,7 +142,7 @@ const LocalTransfer = ({ onClose, userAccounts, userEmail }) => {
     setIsSubmitting(true);
     setVerificationError("");
     try {
-      const res = await fetch("http://localhost:5000/api/transfer/verify", {
+      const res = await fetch("https://hsbc-backend-rc6o.onrender.com/api/transfer/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transferId, code: verificationCode.trim() }),
@@ -151,7 +152,7 @@ const LocalTransfer = ({ onClose, userAccounts, userEmail }) => {
       if (!res.ok) {
         setVerificationError(result.message || "Verification failed.");
       } else {
-        setApprovalStatus("Approved");
+        setApprovalStatus("Pending");
         setIsSubmitted(true);
         setTimeout(onClose, 3000);
       }

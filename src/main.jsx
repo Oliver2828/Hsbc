@@ -6,7 +6,7 @@ import './index.css'
 
 // Layouts
 import HomeLayout    from './layouts/Home/HomeLayout'
-import KoreaLayout   from './layouts/HSBC Korea/KoreaLayout'
+import KoreaLayout   from './layouts/HSSBBCC Korea/KoreaLayout'
 import MarketLayout  from './layouts/Global Market/MarketLayout'
 import BankingLayout from './layouts/Global Banking/BankingLayout'
 import AdminLayout   from './layouts/Admin/AdminLayout'

@@ -38,12 +38,8 @@ const TransactionHistoryTable = ({
   onPageChange = () => {},
   showPagination = false,
 }) => {
-  // Filter only Daily Business Income and Bank Charges
-  const filteredTransactions = transactions.filter(
-    (t) =>
-      t.recipientName === "Daily Business Income" ||
-      t.recipientName === "Bank Charges"
-  );
+  // Show all transactions passed in, no filter
+  const filteredTransactions = transactions;
 
   // Pagination calculations
   const totalPages = Math.ceil(
@@ -124,7 +120,7 @@ const TransactionHistoryTable = ({
                 colSpan="6"
                 className="text-center py-4 text-gray-400"
               >
-                No Daily Business Income or Charges found.
+                No transactions found.
               </td>
             </tr>
           )}

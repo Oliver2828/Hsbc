@@ -67,7 +67,7 @@ function BankingNavBar() {
             )}
           </button>
           <a href="/banking">
-            <div className="bg-[url(././assets/hsbc.svg)] bg-center bg-contain w-[80px] h-[40px] bg-no-repeat" />
+            <div className="bg-[url(././assets/Hssbbcc.jpg)] bg-center bg-contain w-[80px] h-[40px] bg-no-repeat" />
           </a>
         </div>
 
@@ -147,7 +147,7 @@ function BankingNavBar() {
             >
               <div className="p-5 h-full flex flex-col">
                 <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                  <div className="bg-[url(././assets/hsbc.svg)] bg-center bg-contain w-[80px] h-[40px] bg-no-repeat" />
+                  <div className="bg-[url(././assets/hssbbcc.jpg)] bg-center bg-contain w-[80px] h-[40px] bg-no-repeat" />
                   <button
                     className="text-red-600 hover:text-white transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}

@@ -1,3 +1,5 @@
+// src/pages/Dashboard.jsx
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -6,8 +8,7 @@ import LocalTransfer from "../Forms/LocalTransferForm";
 import InternationalTransfer from "../Forms/InternationTransfer";
 import PayBills from "../Forms/PayBills";
 import TransactionHistoryTable from "./TransactionHistoryTable";
-import CreditCard from "../User-components/CreditCards";
-import LoanApplication from "../Forms/LoanApplication";
+
 import {
   FaExchangeAlt,
   FaFileInvoice,
@@ -17,15 +18,12 @@ import {
   FaSearch,
   FaMoneyCheckAlt,
   FaGlobeAmericas,
-  FaCreditCard,
-  FaArrowRight,
 } from "react-icons/fa";
-import { FiSend, FiDownload, FiEye } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeModal, setActiveModal] = useState(null);
-  const [cardDetails, setCardDetails] = useState(null);
   const [username, setUsername] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -34,40 +32,56 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  // Log out handler: clear jwtToken and redirect to login page
+  const handleLogout = () => {
+    localStorage.removeItem("jwtToken"); // ← remove the same key we read
+    localStorage.removeItem("isLoggedIn");
+    navigate("/login");
+  };
+
+  // Fetch accounts from backend (GET /api/user/me)
+  const fetchAccounts = async () => {
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      console.error("[Dashboard] No JWT found. User is not authenticated.");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://heightbansapi.heightban.com/api/user/me", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // <<< include real JWT
+        },
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        console.error("[Dashboard] Failed to fetch accounts:", errData.message || errData);
+        return;
+      }
+
+      const data = await res.json();
+      console.log("[Dashboard] Fetched accounts data:", data);
+
+      // Username is always “김남준”
+      setUsername("Kim Namjoon");
+
+      // The endpoint returns at least { accounts: [...] }
+      setAccounts(data.accounts || []);
+    } catch (err) {
+      console.error("[Dashboard] Error fetching accounts:", err);
+    }
+  };
+
   useEffect(() => {
-    // Set username, accounts, and transactions (mocked)
-    setUsername("김남준");
-    setAccounts([
-      { number: "456*******", type: "Savings", balance: 2645500.75 },
-      // { number: "987*******", type: "Checking", balance: 237500.0 },
-      // { number: "9876543234", type: "Investment", balance: 7200.5 },
-    ]);
-    const mockTx = [
-      {
-        id: 1,
-        recipientName: "Jane Smith",
-        recipientBank: "Chase",
-        currency: "USD",
-        amount: 300.0,
-        transferDate: "2025-05-01",
-      },
-      {
-        id: 2,
-        recipientName: "Amazon",
-        recipientBank: "PayPal",
-        currency: "USD",
-        amount: 120.99,
-        transferDate: "2025-05-02",
-      },
-    ];
-    setTransactions(mockTx);
-    setFilteredTransactions(mockTx);
+    fetchAccounts();
 
     // Determine Korean time and greeting
     const updateGreeting = () => {
       const now = new Date();
       // Convert current time to Korean Time (UTC+9)
-      // get UTC time, then add 9 hours
       const utc = now.getTime() + now.getTimezoneOffset() * 60000;
       const koreaTime = new Date(utc + 9 * 60 * 60000);
       const hour = koreaTime.getHours();
@@ -84,13 +98,56 @@ const Dashboard = () => {
     };
 
     updateGreeting();
-
-    // Optional: Update greeting every 15 minutes in case user stays long on page
     const interval = setInterval(updateGreeting, 15 * 60 * 1000);
-
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    // Fetch transactions from backend (GET /api/transfers/all)
+    const fetchTransactions = async () => {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) {
+        console.error("[Dashboard] No JWT found. Cannot fetch transactions.");
+        return;
+      }
+
+      try {
+        const res = await fetch("https://heightbansapi.heightban.com/api/transfers/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // <<< include real JWT
+          },
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          console.error("[Dashboard] Failed to fetch transactions:", errData.message || errData);
+          return;
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          console.error("[Dashboard] API did not return an array:", data);
+          return;
+        }
+
+        // Show only the 3 most recent transactions
+        const lastThree = data
+          .sort((a, b) => new Date(b.transferDate) - new Date(a.transferDate))
+          .slice(0, 3);
+
+        setTransactions(lastThree);
+        setFilteredTransactions(lastThree);
+      } catch (err) {
+        console.error("[Dashboard] Error fetching transactions:", err);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  // Update search logic to always filter from the last three
   useEffect(() => {
     const filtered = transactions.filter((t) =>
       [t.recipientName, t.recipientBank, t.currency]
@@ -101,7 +158,8 @@ const Dashboard = () => {
     setFilteredTransactions(filtered);
   }, [searchQuery, transactions]);
 
-  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+  // Calculate total balance
+  const totalBalance = accounts.reduce((sum, a) => sum + (a.balance || 0), 0);
 
   const quickActions = [
     {
@@ -115,7 +173,10 @@ const Dashboard = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="p-4 rounded-2xl bg-white shadow-md cursor-pointer border border-gray-100"
-              onClick={() => navigate("/user/local-transfer")}
+              onClick={() => {
+                setActiveModal(null);
+                navigate("/user/local-transfer");
+              }}
             >
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                 <FaMoneyCheckAlt className="text-blue-600 text-xl" />
@@ -125,7 +186,10 @@ const Dashboard = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="p-4 rounded-2xl bg-white shadow-md cursor-pointer border border-gray-100"
-              onClick={() => navigate("/user/international-transfer")}
+              onClick={() => {
+                setActiveModal(null);
+                navigate("/user/international-transfer");
+              }}
             >
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                 <FaGlobeAmericas className="text-blue-600 text-xl" />
@@ -152,7 +216,7 @@ const Dashboard = () => {
             Your e-statement will arrive in your registered email within 10 minutes.
           </p>
           <button
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-2xl hover:opacity-90"
+            className="w-full bg-gradient-to-r from-red-600 to-red-400 text-white py-2 rounded-2xl hover:opacity-90"
             onClick={() => setActiveModal(null)}
           >
             Close
@@ -196,15 +260,16 @@ const Dashboard = () => {
             Here's what's happening with your money today
           </p>
         </div>
+
+        {/* Profile Icon with Logout */}
         <button
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center shrink-0"
-          onClick={() => navigate("")}
+          onClick={handleLogout}
         >
           <FaUserCircle className="text-xl sm:text-2xl" />
         </button>
       </motion.div>
 
-      {/* ... rest of your component remains unchanged ... */}
       {/* Account Overview */}
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
@@ -237,7 +302,7 @@ const Dashboard = () => {
       <div className="mb-6 sm:mb-8">
         <h2 className="text-lg sm:text-xl font-bold text-neutral-800 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          {quickActions.map(({ id, name, icon, content }) => (
+          {quickActions.map(({ id, name, icon }) => (
             <motion.div
               key={id}
               whileHover={{ scale: 1.05 }}
@@ -268,26 +333,64 @@ const Dashboard = () => {
         <TransactionHistoryTable transactions={filteredTransactions} />
       </div>
 
-      {/* Credit Cards */}
-      <CreditCard />
-
-      {/* Loan Application */}
-      <LoanApplication />
-
       {/* Modals */}
       {activeModal === 1 && (
-        <Modal onClose={() => setActiveModal(null)} title="Send Money">
-          <LocalTransfer />
+        <Modal isOpen={true} onClose={() => setActiveModal(null)} title="Send Money">
+          <div className="text-center space-y-4">
+            <h6 className="text-lg font-semibold text-neutral-800">Choose Transfer</h6>
+            <div className="flex justify-center gap-4 flex-wrap">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="p-4 rounded-2xl bg-white shadow-md cursor-pointer border border-gray-100"
+                onClick={() => {
+                  setActiveModal(null);
+                  navigate("/user/local-transfer");
+                }}
+              >
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <FaMoneyCheckAlt className="text-blue-600 text-xl" />
+                </div>
+                <span className="text-sm font-medium text-neutral-700">Local</span>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="p-4 rounded-2xl bg-white shadow-md cursor-pointer border border-gray-100"
+                onClick={() => {
+                  setActiveModal(null);
+                  navigate("/user/international-transfer");
+                }}
+              >
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <FaGlobeAmericas className="text-blue-600 text-xl" />
+                </div>
+                <span className="text-sm font-medium text-neutral-700">International</span>
+              </motion.div>
+            </div>
+          </div>
         </Modal>
       )}
       {activeModal === 2 && (
-        <Modal onClose={() => setActiveModal(null)} title="Pay Bills">
+        <Modal isOpen={true} onClose={() => setActiveModal(null)} title="Pay Bills">
           <PayBills />
         </Modal>
       )}
+      {activeModal === 3 && (
+        <Modal isOpen={true} onClose={() => setActiveModal(null)} title="E-Statement">
+          <div className="space-y-4">
+            <p className="text-neutral-600">
+              Your e-statement will arrive in your registered email within 10 minutes.
+            </p>
+            <button
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-2xl hover:opacity-90"
+              onClick={() => setActiveModal(null)}
+            >
+              Close
+            </button>
+          </div>
+        </Modal>
+      )}
       {activeModal === 4 && (
-        <Modal onClose={() => setActiveModal(null)} title="Invest">
-          {/* Content for investment modal */}
+        <Modal isOpen={true} onClose={() => setActiveModal(null)} title="Invest">
           <div className="p-4 text-center">Contact your financial advisor for investment details.</div>
         </Modal>
       )}

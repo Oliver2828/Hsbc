@@ -27,7 +27,7 @@ const Login = () => {
         // Step 1: Send email + password to /api/auth/login
         const res = await fetch('https://heightbansapi.heightban.com/api/auth/login', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify({ email, password }),
         });
         const data = await res.json();
